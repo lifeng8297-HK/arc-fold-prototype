@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ARC-FOLD · 数字样机</title>
+<title>ARC-FOLD · Digital Prototype</title>
 <style>
 :root{color-scheme:light;--paper:#f5f3ee;--card:#fffefa;--ink:#1c2926;--muted:#55625e;--edge:#d8ded7;--accent:#216649;--soft:#e3efe6;--warn:#a03823;--alert:#fae7df;--oak:#c8915c}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 "Inter","Microsoft YaHei",system-ui,sans-serif}button,input,select{font:inherit}button,select{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #287451;outline-offset:3px}
@@ -17,76 +17,76 @@ main{width:min(1420px,100%);margin:auto;padding:24px clamp(14px,3vw,48px) 35px}.
 </style>
 </head>
 <body><main>
-<header class="header"><div><div class="brand">ARC-FOLD / CDT504</div><h1>折叠桌数字样机</h1></div><span class="tag">几何预估 · mm</span></header>
-<section class="control" aria-label="样机控制">
+<header class="header"><div><div class="brand">ARC-FOLD / CDT504</div><h1>Folding Table Prototype</h1></div><span class="tag">Geometry estimates · mm</span></header>
+<section class="control" aria-label="Prototype controls">
   <div class="topbar">
-    <div class="topbar" role="group" aria-label="构型">
-      <button class="button mode" data-mode="open" aria-pressed="false">360° 全开</button>
-      <button class="button mode" data-mode="wall" aria-pressed="true">180° 贴墙</button>
-      <button class="button mode" data-mode="column" aria-pressed="false">270° 侧向进柱</button>
+    <div class="topbar" role="group" aria-label="Configuration">
+      <button class="button mode" data-mode="open" aria-pressed="false">360° Fully Open</button>
+      <button class="button mode" data-mode="wall" aria-pressed="true">180° Wall Fit</button>
+      <button class="button mode" data-mode="column" aria-pressed="false">270° Column Fit</button>
     </div>
-    <div class="camera" role="group" aria-label="视角">
-      <a class="button jump" href="#mechanism">翻折支架 ↓</a>
-      <button class="button" id="perspective" aria-pressed="true">立体</button>
-      <button class="button" id="plan" aria-pressed="false">俯视</button>
-      <button class="button" id="reset">复位</button>
+    <div class="camera" role="group" aria-label="View controls">
+      <a class="button jump" href="#mechanism">Folding Mechanisms ↓</a>
+      <button class="button" id="perspective" aria-pressed="true">3D View</button>
+      <button class="button" id="plan" aria-pressed="false">Top View</button>
+      <button class="button" id="reset">Reset View</button>
     </div>
   </div>
   <div class="transport" id="transport">
-    <button class="button primary" id="play">播放开合</button>
-    <input id="progress" type="range" min="0" max="1000" step="1" value="1000" aria-label="开合与贴近进度">
+    <button class="button primary" id="play">Play Sequence</button>
+    <input id="progress" type="range" min="0" max="1000" step="1" value="1000" aria-label="Folding and approach progress">
     <output class="step" id="stage" for="progress"></output>
   </div>
   <div class="fields" id="column-options" hidden>
-    <label>柱形<select id="shape"><option value="circle">圆柱</option><option value="square">方柱</option></select></label>
-    <label><span id="size-label">柱径</span><input id="size" type="number" min="120" max="320" step="1" value="240"> mm</label>
-    <label>终点退距<input id="setback" type="number" min="0" max="100" step="1" value="40"> mm</label>
+    <label>Column shape<select id="shape"><option value="circle">Round</option><option value="square">Square</option></select></label>
+    <label><span id="size-label">Diameter</span><input id="size" type="number" min="120" max="320" step="1" value="240"> mm</label>
+    <label>Final setback<input id="setback" type="number" min="0" max="100" step="1" value="40"> mm</label>
   </div>
   <div class="fields" id="wall-options">
-    <label><input id="show-target" type="checkbox">将方案 A 推到 3 mm 目标位置</label>
+    <label><input id="show-target" type="checkbox">Test Concept A at the 3 mm target gap</label>
   </div>
 </section>
 <div class="compare">
   <section class="model" aria-labelledby="design-heading">
-    <header class="modelheader"><h2 id="design-heading">方案 A · ARC-FOLD</h2><span>四分块 + 随板收脚</span></header>
-    <div class="view"><canvas id="design-view" aria-label="方案 A 三维模型，拖动可旋转">方案 A 三维模型</canvas><span class="marker">拖动旋转 · 滚轮缩放</span></div>
+    <header class="modelheader"><h2 id="design-heading">Concept A · ARC-FOLD</h2><span>Four panels and retractable base arms</span></header>
+    <div class="view"><canvas id="design-view" aria-label="Concept A 3D model. Drag to rotate.">Concept A 3D model</canvas><span class="marker">Drag to rotate · Scroll to zoom</span></div>
     <div class="metrics" id="design-metrics"></div>
   </section>
   <section class="model" aria-labelledby="baseline-heading">
-    <header class="modelheader"><h2 id="baseline-heading">报告基准 · 整圆独腿桌</h2><span>Ø900 固定桌面</span></header>
-    <div class="view"><canvas id="baseline-view" aria-label="整圆基准三维模型，拖动可旋转">整圆基准三维模型</canvas><span class="marker">两边视角同步</span></div>
+    <header class="modelheader"><h2 id="baseline-heading">Baseline · Round Pedestal Table</h2><span>Fixed Ø900 mm tabletop</span></header>
+    <div class="view"><canvas id="baseline-view" aria-label="Baseline 3D model. Drag to rotate.">Baseline 3D model</canvas><span class="marker">Views move together</span></div>
     <div class="metrics" id="baseline-metrics"></div>
   </section>
 </div>
-<div class="legend"><span><i class="swatch oak"></i>桌板</span><span><i class="swatch steel"></i>立柱、脚臂与收折包络</span><span><i class="swatch obstacle"></i>墙 / 柱</span><span><i class="swatch collision"></i>发生干涉的零件</span><span>墙和柱的移动表示桌体与障碍的相对位移</span></div>
+<div class="legend"><span><i class="swatch oak"></i>Tabletop panels</span><span><i class="swatch steel"></i>Pedestal and base arms, including stowed parts</span><span><i class="swatch obstacle"></i>Wall or column</span><span><i class="swatch collision"></i>Parts in collision</span><span>Wall and column motion shows how the table approaches each obstacle.</span></div>
 <section class="mechanism" id="mechanism" aria-labelledby="mechanism-heading">
   <div class="topbar mechanism-title">
-    <h2 id="mechanism-heading">翻折支架</h2>
-    <div class="camera" role="group" aria-label="结构">
-      <button class="button mechanism-tab" data-mechanism="inset" aria-pressed="true">内嵌笔电翻板</button>
-      <button class="button mechanism-tab" data-mechanism="foot" aria-pressed="false">收折脚臂</button>
+    <h2 id="mechanism-heading">Folding Mechanisms</h2>
+    <div class="camera" role="group" aria-label="Mechanism">
+      <button class="button mechanism-tab" data-mechanism="inset" aria-pressed="true">Inset Laptop Panel</button>
+      <button class="button mechanism-tab" data-mechanism="foot" aria-pressed="false">Folding Base Arm</button>
     </div>
   </div>
   <div class="transport">
-    <button class="button primary" id="mechanism-play">收平</button>
-    <input type="range" id="mechanism-angle" min="0" max="25" value="25" step="1" aria-label="翻折角度">
+    <button class="button primary" id="mechanism-play">Lower Panel</button>
+    <input type="range" id="mechanism-angle" min="0" max="25" value="25" step="1" aria-label="Folding angle">
     <output class="step" id="mechanism-value" for="mechanism-angle">25°</output>
   </div>
   <div class="mechanism-grid">
-    <figure class="mechanism-figure"><figcaption>立体近景</figcaption><canvas id="mechanism-view" aria-label="翻折支架的立体近景">翻折支架的立体近景</canvas></figure>
-    <figure class="mechanism-figure"><figcaption id="mechanism-side-caption">沿室内方向的剖视</figcaption><canvas id="mechanism-side" aria-label="显示转轴和开合角度的侧视图">转轴与开合角度侧视图</canvas></figure>
+    <figure class="mechanism-figure"><figcaption>3D Close-up</figcaption><canvas id="mechanism-view" aria-label="3D close-up of the folding mechanism">3D close-up</canvas></figure>
+    <figure class="mechanism-figure"><figcaption id="mechanism-side-caption">Section View</figcaption><canvas id="mechanism-side" aria-label="Section view showing the pivot axis and folding angle">Section view of pivot and angle</canvas></figure>
   </div>
   <p id="mechanism-note" class="detail mechanism-note"></p>
 </section>
-<details class="facts"><summary>几何假设与读数说明</summary>
-  <p>对照采用报告表 10 的 Ø900 整圆独腿桌。早期实物照片里的可折叠桌属于另一种结构。</p>
+<details class="facts"><summary>Model Assumptions and Measurement Method</summary>
+  <p>The comparison uses the fixed Ø900 mm round pedestal table from Table 10 of the project report. The folding table in the earlier reference photos uses a different construction.</p>
   <ul>
-    <li>两方案共用 Ø900 × 740 mm 外形、18 mm 板厚、立柱 Ø70 mm。脚臂从中心起的水平伸距为 380 mm，脚臂宽约 40 mm。五金用简化实体包络表示。</li>
-    <li>180° 先折靠墙侧两瓣及其脚臂，再推到最近的非干涉位置。两方案都量桌面中线两侧 x = ±300 mm 处的墙缝；A 的后直边全宽取相同间隙。基准圆桌另外报告切点和直径端部。</li>
-    <li>270° 先下折一瓣并抬起对应脚臂，再让柱沿开口的 45° 平分线相对推进。终点退距指柱外缘距两条缺口轴线的距离，单位 mm。沿测试路径以不超过 2 mm 的间距计算各零件水平投影至楼板通高柱的有符号间距。负值表示近似平面重叠深度。</li>
-    <li>折叠运动采用径向转轴与简化抬脚轨迹。单独显示桌板与立柱包络的重叠；开合动画为几何提案，锁止、其他内部配合、承重和稳定性留在本模型范围外。</li>
+    <li>Both tables are 900 mm in diameter and 740 mm high, with an 18 mm tabletop and a Ø70 mm pedestal. Each base arm reaches 380 mm from the centre and is about 40 mm wide. The model represents hardware with simplified solid shapes.</li>
+    <li>180° wall fit. Fold the rear two panels and their arms, then move the table as close to the wall as the component shapes allow. Measure both tables at x = ±300 mm from the tabletop centreline. Concept A has a straight rear edge with a uniform gap. The round baseline has separate readings at the point of tangency and the two ends of the diameter.</li>
+    <li>270° column fit. Lower one panel, raise the corresponding arm and move the column relative to the table along the opening’s 45° bisector. Final setback is the distance from the column’s outer edge to each radial edge of the opening. The model samples the path every 2 mm or less and calculates signed clearance between each component’s plan footprint and the full-height column. Negative values indicate approximate overlap in plan.</li>
+    <li>The folding animation uses radial hinges and simplified base-arm motion. The model flags overlap between the panels and the pedestal. Locking, other internal clearances, load capacity and stability are outside the scope of this model.</li>
   </ul>
-  <p>尺寸、路径与结果均为模型预估。规格参考 报告表 10 与目标规格及 Lesson 5。</p>
+  <p>Dimensions, travel paths and clearances are model estimates. Specification references include Table 10 and the project targets and Lesson 5.</p>
 </details>
 </main>
 <script>
@@ -144,7 +144,7 @@ function leaf(i, fold) {
     const dz=pivot-y*Math.sin(theta)+(z-pivot)*Math.cos(theta);
     return reflect ? [x,-dy,dz] : rotate([x,dy,dz],a);
   };
-  return prism(`leaf${i}`,`桌板 ${['右前','左前','左后','右后'][i]}`,quarter,H-T,H,PALETTE.oak,PALETTE.trim,pose);
+  return prism(`leaf${i}`,`${['Front-right','Front-left','Rear-left','Rear-right'][i]} tabletop panel`,quarter,H-T,H,PALETTE.oak,PALETTE.trim,pose);
 }
 
 function arm(i, amount, angleOffset = 45) {
@@ -156,8 +156,8 @@ function arm(i, amount, angleOffset = 45) {
     y,AXLE+(x-root)*Math.sin(theta)+(z-AXLE)*Math.cos(theta)
   ],angle);
   return [
-    prism(`arm${i}`,`脚臂 ${i+1}`,rect(root,-ARM_WIDTH/2,REACH,ARM_WIDTH/2),AXLE-ARM_HEIGHT/2,AXLE+ARM_HEIGHT/2,PALETTE.steel,PALETTE.steel,profile),
-    prism(`foot${i}`,`调平脚 ${i+1}`,polyCircle(14,REACH-15,0,16),0,AXLE-ARM_HEIGHT/2,PALETTE.foot,PALETTE.foot,profile)
+    prism(`arm${i}`,`Base arm ${i+1}`,rect(root,-ARM_WIDTH/2,REACH,ARM_WIDTH/2),AXLE-ARM_HEIGHT/2,AXLE+ARM_HEIGHT/2,PALETTE.steel,PALETTE.steel,profile),
+    prism(`foot${i}`,`Levelling foot ${i+1}`,polyCircle(14,REACH-15,0,16),0,AXLE-ARM_HEIGHT/2,PALETTE.foot,PALETTE.foot,profile)
   ];
 }
 
@@ -165,9 +165,9 @@ function makeTable(kind, mode, fold) {
   const folded = mode==='wall' ? [2,3] : mode==='column' ? [0] : [];
   const moving = i => kind==='design' && folded.includes(i) ? fold : 0;
   const sheets=kind==='design' ? [0,1,2,3].map(i=>leaf(i,moving(i))) :
-    [prism('top','整圆桌面',polyCircle(R,0,0,96),H-T,H,PALETTE.oak,PALETTE.trim)];
-  return [...sheets,prism('post','中央立柱',polyCircle(POST),AXLE,H-T,PALETTE.steel),
-    prism('hub','中心盖帽',polyCircle(POST+3),H,H+3,PALETTE.steel),
+    [prism('top','Round tabletop',polyCircle(R,0,0,96),H-T,H,PALETTE.oak,PALETTE.trim)];
+  return [...sheets,prism('post','Pedestal',polyCircle(POST),AXLE,H-T,PALETTE.steel),
+    prism('hub','Hub cap',polyCircle(POST+3),H,H+3,PALETTE.steel),
     ...[0,1,2,3].flatMap(i=>arm(i,moving(i)))];
 }
 
@@ -344,7 +344,7 @@ function draw(view,bodies,env,hitIds) {
   for(let i=Math.ceil(rear/100)*100;i<=1000;i+=100) path2D(ctx,[[-960,i,0],[960,i,0]],project,null,'#cdd8cc',0.6,false);
 
   if(env.wallY!==undefined) {
-    const wall=prism('wall','墙',rect(-835,env.wallY-60,835,env.wallY),0,910,PALETTE.wall);
+    const wall=prism('wall','Wall',rect(-835,env.wallY-60,835,env.wallY),0,910,PALETTE.wall);
     ctx.save();
     if(camera.depth[1]<0&&!state.plan) ctx.globalAlpha=0.38;
     paintFaces(ctx,[wall],camera,new Set());
@@ -354,7 +354,7 @@ function draw(view,bodies,env,hitIds) {
     const {position,cfg}=env.column;
     const d=cfg.size/2;
     const plan=cfg.shape==='square'?rect(position-d,position-d,position+d,position+d):polyCircle(d,position,position);
-    const col=prism('column','柱',plan,0,1180,PALETTE.col);
+    const col=prism('column','Column',plan,0,1180,PALETTE.col);
     const end=cfg.size/2+cfg.setback;
     ctx.save();ctx.setLineDash([4,4]);
     path2D(ctx,[[COLUMN_START,COLUMN_START,1],[end,end,1]],project,null,'#3b786d',1.3,false);
@@ -404,12 +404,12 @@ function render() {
       const endGap=design?contactGap+1:R+topRearAt300;
       const reached=move>=1-EPS;
       const folding=p<FOLD_PART;
-      const status=clear.value<-EPS?`${clear.label}与墙重叠约 ${mm(-clear.value)}`:
-        reached?(design?'桌面目标 ≤3 mm · 当前包络超出目标':'圆桌在中线切点贴墙'):
-        folding?(design?'先折桌板与脚臂':'固定桌面保持全开'):'向墙移动中';
-      card(view,`±300 mm 处 · ${folding?'终点预估墙缝':'当前墙缝'}`,mm(folding?endGap:gap),status,design?
-        `无墙面穿透时预计 ${mm(endGap)}，由收起的${wallLimiter.label}限制。${postClash?'折板与立柱包络也有重叠。':''}`:
-        `终点切点 0 mm，圆弧两端 ${mm(R)}。`,clear.value<-EPS||(reached&&design&&endGap>3));
+      const status=clear.value<-EPS?`${clear.label} overlaps the wall by about ${mm(-clear.value)}`:
+        reached?(design?'The model exceeds the ≤3 mm target':'The round top touches the wall at the centreline'):
+        folding?(design?'Folding the panels and base arms':'The fixed tabletop stays open'):'Approaching the wall';
+      card(view,`${folding?'Estimated final wall gap':'Current wall gap'} at ±300 mm`,mm(folding?endGap:gap),status,design?
+        `Closest approach gives a ${mm(endGap)} gap, limited by stowed ${wallLimiter.label.toLowerCase()}.${postClash?' The folded panels also overlap the pedestal.':''}`:
+        `Final gap is 0 mm at tangency and ${mm(R)} at both ends of the diameter.`,clear.value<-EPS||(reached&&design&&endGap>3));
     } else if(state.mode==='column') {
       const position=lerp(COLUMN_START,cfg.size/2+cfg.setback,move);
       env.column={cfg,position};
@@ -418,12 +418,12 @@ function render() {
       const colliding=readings.filter(r=>r.value<-EPS);
       colliding.forEach(r=>hits.add(r.id));
       if(colliding.length) hits.add('column');
-      const status=now.value<-EPS?`当前与柱干涉 · ${now.label}`:now.value<=EPS?`当前与柱接触 · ${now.label}`:`当前离柱最近 · ${now.label}`;
-      const route=first?`进柱路径最深重叠 ${mm(-worst.value)}，先碰${first.label}。`:`全程最小柱隙 ${mm(worst.value)}${worst.value<=EPS?'（接触）':''}。`;
-      card(view,'桌体至柱 · 当前最小间距',mm(now.value),status,route+(postClash?' 折板与自身立柱包络有重叠。':''),now.value<-EPS);
+      const status=now.value<-EPS?`Column collision · ${now.label}`:now.value<=EPS?`Column contact · ${now.label}`:`Closest to the column · ${now.label}`;
+      const route=first?`Maximum overlap along the path is ${mm(-worst.value)}. First contact is with the ${first.label.toLowerCase()}.`:`Minimum clearance along the path is ${mm(worst.value)}${worst.value<=EPS?' (contact)':''}.`;
+      card(view,'Current minimum clearance to the column',mm(now.value),status,route+(postClash?' The folded panel also overlaps the pedestal.':''),now.value<-EPS);
     } else {
-      card(view,'水平桌面面积','0.64 m²',view.kind==='design'?'四瓣全开 · 4 支脚臂':'固定整圆桌面',
-        view.kind==='design'?'按外径 Ø900 的名义几何面积。':'用于贴墙和侧向进柱的同尺寸对照。');
+      card(view,'Horizontal tabletop area','0.64 m²',view.kind==='design'?'Four panels open · Four arms deployed':'Fixed round tabletop',
+        view.kind==='design'?'Nominal area based on a Ø900 mm tabletop.':'Same-size baseline for the wall and column checks.');
     }
     draw(view,bodies,env,hits);
   }
@@ -432,10 +432,10 @@ function render() {
   byId('transport').hidden=still;
   byId('column-options').hidden=state.mode!=='column';
   byId('wall-options').hidden=state.mode!=='wall';
-  byId('size-label').textContent=cfg.shape==='square'?'柱边长':'柱径';
-  byId('stage').textContent=p===1?(state.mode==='wall'?'贴墙终点':'进柱终点'):
-    p<FOLD_PART?`折板与收脚 ${Math.round(fold*90)}°`:`${state.mode==='wall'?'靠墙':'侧向进柱'} ${Math.round(move*100)}%`;
-  byId('play').textContent=state.playing?'暂停':'播放开合';
+  byId('size-label').textContent=cfg.shape==='square'?'Side length':'Diameter';
+  byId('stage').textContent=p===1?(state.mode==='wall'?'Final wall position':'Final column position'):
+    p<FOLD_PART?`Folding ${Math.round(fold*90)}°`:`${state.mode==='wall'?'Approach':'Side entry'} ${Math.round(move*100)}%`;
+  byId('play').textContent=state.playing?'Pause':'Play Sequence';
   byId('plan').setAttribute('aria-pressed',String(state.plan));
   byId('perspective').setAttribute('aria-pressed',String(!state.plan));
 }
@@ -492,22 +492,22 @@ for(const {canvas} of views) {
 }
 const mechanism={type:'inset',angles:{inset:25,foot:0},animation:0};
 const mechanismSpec={
-  inset:{max:25,open:'抬起翻板',close:'收平',caption:'沿翻板中线的剖视'},
-  foot:{max:90,open:'收起脚臂',close:'展开脚臂',caption:'沿脚臂中线的剖视'}
+  inset:{max:25,open:'Raise Panel',close:'Lower Panel',caption:'Section Through the Inset Panel'},
+  foot:{max:90,open:'Stow Arm',close:'Deploy Arm',caption:'Section Through the Base Arm'}
 };
 
 function insetAssembly(angle) {
   const a=angle*DEG;
   const pose=([x,y,z])=>[x,y*Math.cos(a)-z*Math.sin(a),y*Math.sin(a)+z*Math.cos(a)];
-  const oak=polygon=>prism('host','固定桌面',polygon,-18,0,PALETTE.oak,PALETTE.trim);
+  const oak=polygon=>prism('host','Fixed tabletop',polygon,-18,0,PALETTE.oak,PALETTE.trim);
   const endRails=[oak(rect(-220,-62,220,-1)),oak(rect(-220,251,220,318))];
   const sideRails=[oak(rect(-220,-1,-151,251)),oak(rect(151,-1,220,251))];
-  const flap=prism('inset','笔电翻板',rect(-150,0,150,250),-18,0,'#d9a372','#8c6645',pose);
+  const flap=prism('inset','Inset laptop panel',rect(-150,0,150,250),-18,0,'#d9a372','#8c6645',pose);
   return {full:[...endRails,...sideRails,flap],side:[...endRails,flap],axis:[[-149,0,1],[149,0,1]]};
 }
 
 function footAssembly(angle) {
-  const post=prism('post','中央立柱',polyCircle(POST),AXLE,440,PALETTE.steel);
+  const post=prism('post','Pedestal',polyCircle(POST),AXLE,440,PALETTE.steel);
   const parts=[post,...arm(0,angle/90,0)];
   return {full:parts,side:parts,axis:[[ARM_WIDTH*0.85,-19,AXLE],[ARM_WIDTH*0.85,19,AXLE]]};
 }
@@ -568,13 +568,13 @@ function renderMechanism() {
   const [px,py]=side.project(pivot);
   section.ctx.beginPath();section.ctx.arc(px,py,4.5,0,2*Math.PI);
   section.ctx.fillStyle='#216649';section.ctx.fill();
-  label(section.ctx,side.project,inset?[0,-13,34]:[-12,0,85],inset?'近侧铰链轴':'脚臂转轴','#216649');
+  label(section.ctx,side.project,inset?[0,-13,34]:[-12,0,85],inset?'Front hinge axis':'Base arm pivot','#216649');
   byId('mechanism-value').textContent=`${Math.round(a)}°`;
-  byId('mechanism-play').textContent=mechanism.animation?'暂停':a>=spec.max*0.5?spec.close:spec.open;
+  byId('mechanism-play').textContent=mechanism.animation?'Pause':a>=spec.max*0.5?spec.close:spec.open;
   byId('mechanism-side-caption').textContent=spec.caption;
   byId('mechanism-note').textContent=inset?
-    `渲染方案的 300 × 250 mm 笔电翻板。近侧绕轴，收平后与桌面齐平；当前后缘抬高约 ${mm(250*Math.sin(theta))}。绿色线标示隐藏铰链轴。`:
-    `单支脚臂绕立柱底部转轴抬起。主样机同步演示桌板和对应脚臂收折；剖视图表示运动方向，收折舱与锁止结构待细化。`;
+    `The 300 × 250 mm laptop panel from the renderings pivots at its front edge and sits flush when closed. The rear edge currently rises about ${mm(250*Math.sin(theta))}. The green line marks the concealed hinge axis.`:
+    `One base arm rotates upward about a pivot at the bottom of the pedestal. The main model shows how each panel and its arm fold together. The storage recess and locking mechanism still need detailed design.`;
 }
 
 function stopMechanism() {cancelAnimationFrame(mechanism.animation);mechanism.animation=0;}
