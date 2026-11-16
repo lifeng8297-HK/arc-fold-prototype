@@ -5,30 +5,147 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ARC-FOLD · Digital Prototype</title>
 <style>
-:root{color-scheme:light;--paper:#f5f3ee;--card:#fffefa;--ink:#1c2926;--muted:#55625e;--edge:#d8ded7;--accent:#216649;--soft:#e3efe6;--warn:#a03823;--alert:#fae7df;--oak:#c8915c}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 "Inter","Microsoft YaHei",system-ui,sans-serif}button,input,select{font:inherit}button,select{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #287451;outline-offset:3px}
-main{width:min(1420px,100%);margin:auto;padding:24px clamp(14px,3vw,48px) 35px}.header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:14px}.brand{color:var(--accent);font-size:13px;font-weight:800;letter-spacing:.13em}h1{font-size:clamp(26px,3.4vw,44px);line-height:1.13;margin:4px 0 0}h2{font-size:17px;margin:0}.tag{color:var(--muted);border:1px solid var(--edge);border-radius:999px;padding:5px 12px;white-space:nowrap}
-.control{background:var(--card);border:1px solid var(--edge);border-radius:13px;padding:12px 14px;margin-bottom:12px}.topbar,.transport,.fields,.camera,.legend{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.topbar{justify-content:space-between}.button{border:1px solid var(--edge);border-radius:7px;padding:6px 11px;background:var(--card);color:var(--ink);font-weight:650}.button:hover{background:#eef3ed}.button.active,.button[aria-pressed=true]{background:var(--soft);color:#20543d;border-color:#abc3af}.primary{background:var(--accent);color:white;border-color:var(--accent);min-width:86px}.primary:hover{background:#184e37}.transport{margin-top:10px}.transport input{flex:1;min-width:100px;margin:0 6px}.step{color:var(--muted);min-width:132px;text-align:right;font-variant-numeric:tabular-nums}.fields{margin-top:10px;color:var(--muted);gap:9px 16px}.fields label{display:flex;align-items:center;gap:7px}.fields select,.fields input[type=number]{border:1px solid var(--edge);border-radius:6px;background:var(--card);padding:3px 7px;color:var(--ink)}.fields input[type=number]{width:78px}input[type=range]{accent-color:var(--accent)}[hidden]{display:none!important}
-.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}.model{min-width:0;background:var(--card);border:1px solid var(--edge);border-radius:13px;overflow:hidden}.modelheader{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--edge)}.modelheader span{color:var(--muted);font-size:12px}.view{position:relative;background:#eef0e9}canvas{width:100%;height:clamp(260px,37vh,485px);display:block;touch-action:none;cursor:grab}canvas:active{cursor:grabbing}.marker{position:absolute;bottom:8px;left:10px;padding:3px 7px;border-radius:4px;background:#fffef5e8;color:var(--muted);font-size:11px;pointer-events:none}.metrics{padding:10px 14px 13px;min-height:113px}.key{font-size:14px;color:var(--muted)}.number{font-size:26px;font-weight:780;font-variant-numeric:tabular-nums;line-height:1.3}.status{color:var(--accent);font-weight:650}.bad{color:var(--warn)}.detail{margin:4px 0 0;color:var(--muted);font-size:13px}.legend{margin:9px 0 12px;color:var(--muted);font-size:12px;gap:8px 16px}.swatch{display:inline-block;width:11px;height:11px;vertical-align:-1px;border-radius:2px;margin-right:5px}.oak{background:var(--oak)}.steel{background:#7f8b8d}.obstacle{background:#9bb3b1}.collision{background:#c54d35}
-.facts{border:1px solid var(--edge);border-radius:10px;background:var(--card);padding:9px 14px}.facts summary{font-weight:700;cursor:pointer}.facts p,.facts li{font-size:13px;color:var(--muted)}.facts p{margin:7px 0}.facts ul{margin:6px 0;padding-left:20px}.facts a{color:#175e41}
-.jump{display:inline-block;text-decoration:none}.mechanism{background:var(--card);border:1px solid var(--edge);border-radius:13px;margin:12px 0;padding:12px 14px;scroll-margin-top:12px}.mechanism h2{font-size:21px}.mechanism .transport{margin-bottom:10px}.mechanism .step{min-width:54px}.mechanism-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:8px}.mechanism-figure{min-width:0;margin:0;background:#eef0e9;border-radius:8px;overflow:hidden}.mechanism-figure figcaption{padding:5px 10px;color:var(--muted);font-size:12px}.mechanism canvas{height:246px;cursor:default;touch-action:auto}.mechanism-note{margin:7px 0 0}.mechanism-title{margin-bottom:8px}
-@media(max-width:760px){main{padding-top:15px}.compare{grid-template-columns:1fr}.step{min-width:0}.tag{font-size:12px}.modelheader{flex-wrap:wrap}.camera{margin-top:4px}canvas{height:310px}}
-@media(max-width:550px){.mechanism-grid{grid-template-columns:1fr}.mechanism canvas{height:215px}}
+:root {
+  color-scheme: light;
+  --paper: #f5f5f7;
+  --card: #fff;
+  --ink: #1d1d1f;
+  --muted: #55555b;
+  --edge: #e3e3e8;
+  --accent: #0071e3;
+  --focus: #0066cc;
+  --warn: #b33227;
+  --ok: #24634d;
+  --scene: #f2f3f6;
+  --panel-shadow: 0 4px 20px #222b4210;
+  --content: min(1320px, 100%);
+  --gutter: clamp(16px, 4vw, 48px);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.5 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+a { color: var(--focus); }
+button, input, select { font: inherit; }
+button, select, summary { cursor: pointer; }
+:is(a, button, input, select, summary):focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+[hidden] { display: none !important; }
+.site-header { background: var(--card); border-bottom: 1px solid var(--edge); }
+.site-nav { width: var(--content); min-height: 56px; margin: auto; padding: 0 var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.wordmark { color: var(--ink); text-decoration: none; font-size: 20px; font-weight: 760; letter-spacing: -.045em; white-space: nowrap; }
+.nav-link { text-decoration: none; font-size: 13px; font-weight: 600; }
+.nav-link:hover, .hero-link:hover { text-decoration: underline; }
+main { width: var(--content); margin: auto; padding: 24px var(--gutter) 50px; }
+.header { display: grid; grid-template-columns: 1fr .9fr; align-items: center; min-height: 306px; gap: 18px; overflow: hidden;
+  padding: 26px clamp(20px, 4vw, 52px); margin-bottom: 27px; border: 1px solid #e7e7ed; border-radius: 28px;
+  background: radial-gradient(ellipse at 76% 40%, #fff 2%, #fafafb 53%, #ededf3 100%); }
+.brand { color: var(--muted); font-size: 12px; font-weight: 720; letter-spacing: .09em; }
+h1 { max-width: 13ch; margin: 9px 0 10px; font-size: clamp(43px, 6.1vw, 80px); font-weight: 710; letter-spacing: -.064em; line-height: .98; }
+h2, h3 { margin: 0; line-height: 1.18; }
+.header p { max-width: 40ch; margin: 0 0 13px; color: var(--muted); font-size: clamp(15px, 1.55vw, 18px); }
+.hero-link { font-weight: 650; text-decoration: none; }
+.hero-model { display: block; width: 100%; height: 250px; }
+.section-heading { display: flex; align-items: baseline; flex-wrap: wrap; justify-content: space-between; gap: 4px 14px; margin: 0 0 12px; }
+.section-heading h2, .mechanism h2 { font-size: clamp(24px, 3vw, 34px); font-weight: 710; letter-spacing: -.04em; }
+.section-heading span { color: var(--muted); font-size: 13px; }
+#comparison, #mechanism { scroll-margin-top: 18px; }
+.control, .model, .mechanism, .facts { background: var(--card); border: 1px solid var(--edge); border-radius: 22px; box-shadow: var(--panel-shadow); }
+.control { padding: 14px 16px; margin-bottom: 14px; }
+.topbar, .transport, .fields, .camera, .legend { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.topbar { justify-content: space-between; }
+.segments { display: flex; align-items: center; gap: 3px; flex-wrap: wrap; border-radius: 12px; padding: 4px; background: #f0f0f3; }
+.button { border: 0; border-radius: 9px; padding: 7px 12px; background: transparent; color: var(--ink); font-size: 14px; font-weight: 620; line-height: 1.4; }
+.button:hover { background: #e5e5ed; }
+.segments .button[aria-pressed=true] { background: var(--card); color: var(--ink); box-shadow: 0 1px 4px #1c243c24; }
+.camera > .button { color: var(--focus); }
+.primary { min-width: 105px; background: var(--accent); color: #fff; border-radius: 999px; padding: 8px 16px; }
+.primary:hover { background: #0067cd; }
+.transport { margin-top: 12px; }
+.transport input[type=range] { flex: 1; min-width: 100px; margin: 0 6px; }
+.step { min-width: 145px; text-align: right; font-size: 13px; font-variant-numeric: tabular-nums; color: var(--muted); }
+.fields { margin-top: 10px; color: var(--muted); gap: 8px 16px; font-size: 13px; }
+.fields label { display: flex; align-items: center; gap: 6px; }
+.fields select, .fields input[type=number] { border: 1px solid var(--edge); border-radius: 8px; background: #fafafa; padding: 4px 8px; color: var(--ink); }
+.fields input[type=number] { width: 78px; }
+input[type=range], input[type=checkbox] { accent-color: var(--accent); }
+.compare { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+.model { overflow: hidden; }
+.modelheader { padding: 15px 18px 12px; }
+.modelheader h3 { font-size: clamp(17px,2vw,22px); font-weight: 690; letter-spacing: -.032em; }
+.modelheader p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+.view { position: relative; background: var(--scene); }
+.view canvas, .mechanism canvas { display: block; width: 100%; }
+.view canvas { height: clamp(255px, 38vh, 445px); touch-action: none; cursor: grab; }
+.view canvas:active { cursor: grabbing; }
+.marker { position: absolute; bottom: 10px; left: 12px; padding: 4px 9px; border-radius: 999px; background: #fffffff0; color: var(--muted); font-size: 11px; pointer-events: none; }
+.metrics { min-height: 142px; padding: 14px 18px 18px; }
+.key { font-size: 13px; color: var(--muted); }
+.number { margin: 1px 0 3px; font-size: clamp(32px,4.5vw,53px); font-weight: 710; letter-spacing: -.055em; line-height: 1.03; font-variant-numeric: tabular-nums; }
+.status { color: var(--ok); font-weight: 650; font-size: 13px; }
+.bad { color: var(--warn); }
+.detail { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+.legend { margin: 12px 2px 26px; color: var(--muted); font-size: 12px; gap: 6px 16px; }
+.legend p { margin: 0; width: 100%; }
+.swatch { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+.oak { background: #c99464; } .steel { background: #8d96a3; } .obstacle { background: #aab8ce; } .collision { background: #d65743; }
+.mechanism { padding: clamp(14px,2.5vw,24px); margin-bottom: 17px; }
+.mechanism .transport { margin-bottom: 13px; }
+.mechanism .step { min-width: 50px; }
+.mechanism-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 10px; }
+.mechanism-figure { min-width: 0; margin: 0; background: var(--scene); border-radius: 14px; overflow: hidden; }
+.mechanism-figure figcaption { padding: 8px 12px 0; color: var(--muted); font-size: 12px; font-weight: 620; }
+.mechanism canvas { height: 245px; }
+.mechanism-note { margin: 11px 1px 0; }
+.facts { padding: 13px 17px; }
+.facts summary { font-size: 14px; font-weight: 650; }
+.facts p, .facts li { max-width: 90ch; font-size: 13px; color: var(--muted); }
+.facts p { margin: 9px 0; }
+.facts ul { margin: 7px 0; padding-left: 20px; }
+.facts li + li { margin-top: 4px; }
+@media(max-width:800px) {
+  main { padding-top: 16px; }
+  .header { border-radius: 23px; margin-bottom: 21px; }
+  .compare { grid-template-columns: 1fr; }
+  .view canvas { height: 300px; }
+  .metrics { min-height: auto; }
+}
+@media(max-width:580px) {
+  .header { grid-template-columns: 1fr; gap: 4px; padding-top: 25px; padding-bottom: 10px; }
+  .hero-model { height: 172px; }
+  .site-nav { min-height: 48px; }
+  .button { padding: 7px 8px; font-size: 13px; }
+  .primary { min-width: 85px; padding: 8px 12px; }
+  .segments { gap: 1px; }
+  .step { min-width: 0; }
+  .mechanism-grid { grid-template-columns: 1fr; }
+  .mechanism canvas { height: 210px; }
+}
+@media(prefers-reduced-motion:reduce) { html { scroll-behavior: auto; } }
 </style>
 </head>
-<body><main>
-<header class="header"><div><div class="brand">ARC-FOLD / CDT504</div><h1>Folding Table Prototype</h1></div><span class="tag">Geometry estimates · mm</span></header>
+<body>
+<header class="site-header"><nav class="site-nav" aria-label="Prototype navigation">
+  <a class="wordmark" href="#top">ARC-FOLD</a>
+  <a class="nav-link" href="#mechanism">Folding Mechanisms ↓</a>
+</nav></header>
+<main id="top">
+<header class="header">
+  <div><div class="brand">CDT504 PRODUCT DESIGN</div><h1>Folding Table Prototype</h1><p>See how a four-panel table folds to fit a wall or slide around a column.</p><a class="hero-link" href="#comparison">Explore the 3D model ↓</a></div>
+  <canvas class="hero-model" id="hero-view" aria-label="ARC-FOLD table, fully open">ARC-FOLD table, fully open</canvas>
+</header>
+<section id="comparison" aria-labelledby="comparison-heading">
+<div class="section-heading"><h2 id="comparison-heading">Compare configurations</h2><span>Geometry estimates · mm</span></div>
 <section class="control" aria-label="Prototype controls">
   <div class="topbar">
-    <div class="topbar" role="group" aria-label="Configuration">
+    <div class="segments" role="group" aria-label="Configuration">
       <button class="button mode" data-mode="open" aria-pressed="false">360° Fully Open</button>
       <button class="button mode" data-mode="wall" aria-pressed="true">180° Wall Fit</button>
       <button class="button mode" data-mode="column" aria-pressed="false">270° Column Fit</button>
     </div>
     <div class="camera" role="group" aria-label="View controls">
-      <a class="button jump" href="#mechanism">Folding Mechanisms ↓</a>
-      <button class="button" id="perspective" aria-pressed="true">3D View</button>
-      <button class="button" id="plan" aria-pressed="false">Top View</button>
+      <div class="segments">
+        <button class="button" id="perspective" aria-pressed="true">3D View</button>
+        <button class="button" id="plan" aria-pressed="false">Top View</button>
+      </div>
       <button class="button" id="reset">Reset View</button>
     </div>
   </div>
@@ -48,21 +165,22 @@ main{width:min(1420px,100%);margin:auto;padding:24px clamp(14px,3vw,48px) 35px}.
 </section>
 <div class="compare">
   <section class="model" aria-labelledby="design-heading">
-    <header class="modelheader"><h2 id="design-heading">Concept A · ARC-FOLD</h2><span>Four panels and retractable base arms</span></header>
+    <header class="modelheader"><h3 id="design-heading">Concept A · ARC-FOLD</h3><p>Four panels and retractable base arms</p></header>
     <div class="view"><canvas id="design-view" aria-label="Concept A 3D model. Drag to rotate.">Concept A 3D model</canvas><span class="marker">Drag to rotate · Scroll to zoom</span></div>
     <div class="metrics" id="design-metrics"></div>
   </section>
   <section class="model" aria-labelledby="baseline-heading">
-    <header class="modelheader"><h2 id="baseline-heading">Baseline · Round Pedestal Table</h2><span>Fixed Ø900 mm tabletop</span></header>
+    <header class="modelheader"><h3 id="baseline-heading">Baseline · Round Pedestal Table</h3><p>Fixed Ø900 mm tabletop</p></header>
     <div class="view"><canvas id="baseline-view" aria-label="Baseline 3D model. Drag to rotate.">Baseline 3D model</canvas><span class="marker">Views move together</span></div>
     <div class="metrics" id="baseline-metrics"></div>
   </section>
 </div>
-<div class="legend"><span><i class="swatch oak"></i>Tabletop panels</span><span><i class="swatch steel"></i>Pedestal and base arms, including stowed parts</span><span><i class="swatch obstacle"></i>Wall or column</span><span><i class="swatch collision"></i>Parts in collision</span><span>Wall and column motion shows how the table approaches each obstacle.</span></div>
+<div class="legend"><span><i class="swatch oak"></i>Tabletop panels</span><span><i class="swatch steel"></i>Pedestal and base arms</span><span><i class="swatch obstacle"></i>Wall or column</span><span><i class="swatch collision"></i>Parts in collision</span><p>Wall and column motion shows how the table approaches each obstacle.</p></div>
+</section>
 <section class="mechanism" id="mechanism" aria-labelledby="mechanism-heading">
   <div class="topbar mechanism-title">
     <h2 id="mechanism-heading">Folding Mechanisms</h2>
-    <div class="camera" role="group" aria-label="Mechanism">
+    <div class="segments" role="group" aria-label="Mechanism">
       <button class="button mechanism-tab" data-mechanism="inset" aria-pressed="true">Inset Laptop Panel</button>
       <button class="button mechanism-tab" data-mechanism="foot" aria-pressed="false">Folding Base Arm</button>
     </div>
@@ -104,7 +222,8 @@ const COLUMN_START = 570;
 const FOLD_PART = 0.55;
 const DEG = Math.PI / 180;
 const EPS = 1e-7;
-const PALETTE = {oak:'#d6a16e', trim:'#4c4940', steel:'#9da9ad', foot:'#3b4544', wall:'#d5e0db', col:'#b3c7c5', hit:'#ca533c'};
+const PALETTE = {oak:'#d6a575', trim:'#46423e', steel:'#a3adba', foot:'#3d4149', wall:'#d6dce6', col:'#bac6d7', hit:'#d65743'};
+const STUDIO = {background:'#f1f2f6', floor:'#e9ecf2', grid:'#d7dce7', accent:'#0066cc'};
 
 function clamp(value, low, high) { return Math.min(high, Math.max(low, value)); }
 function lerp(a, b, t) { return a + (b - a) * t; }
@@ -278,14 +397,17 @@ function sweeps(cfg) {
 }
 
 const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
-function projection(w,h) {
-  const yaw=state.plan?Math.PI/2:state.yaw,angle=state.plan?Math.PI/2:state.tilt;
+function cameraFrame(w,h,yaw,angle,center,scale) {
   const c=Math.cos(yaw),s=Math.sin(yaw),t=Math.sin(angle),u=Math.cos(angle);
   const right=[s,-c,0],up=[-c*t,-s*t,u],depth=[c*u,s*u,t];
+  return {depth,project:p=>[w/2+(dot(p,right)-dot(center,right))*scale,h/2-(dot(p,up)-dot(center,up))*scale]};
+}
+function projection(w,h) {
+  const yaw=state.plan?Math.PI/2:state.yaw,angle=state.plan?Math.PI/2:state.tilt;
   const columnMode=state.mode==='column';
   const scale=Math.min(w/(columnMode?1450:1130),h/(state.plan?(columnMode?1360:1150):(columnMode?1610:1210)))*state.zoom;
   const center=state.plan?(columnMode?[125,125,0]:[0,-45,0]):(columnMode?[95,95,480]:[0,0,385]);
-  return {depth,project:p=>[w/2+(dot(p,right)-dot(center,right))*scale,h/2-(dot(p,up)-dot(center,up))*scale]};
+  return cameraFrame(w,h,yaw,angle,center,scale);
 }
 
 function colorShade(hex,mult) {
@@ -315,33 +437,61 @@ function paintFaces(ctx,meshes,camera,hitIds) {
   }
 }
 
-function label(ctx,project,p,text,color='#34423b') {
+function label(ctx,project,p,text,color='#303847') {
   const [x,y]=project(p);
-  ctx.font='650 12px Inter, Microsoft YaHei, sans-serif';
+  ctx.font='650 12px Inter, system-ui, sans-serif';
   ctx.textAlign='center';
   ctx.textBaseline='middle';
   const width=ctx.measureText(text).width;
-  ctx.fillStyle='#fffef5ee';
-  ctx.fillRect(x-width/2-6,y-9,width+12,18);
+  ctx.fillStyle='#fffffff0';
+  ctx.beginPath();ctx.roundRect(x-width/2-6,y-10,width+12,20,8);ctx.fill();
   ctx.fillStyle=color;
   ctx.fillText(text,x,y);
 }
 
-function draw(view,bodies,env,hitIds) {
-  const canvas=view.canvas;
+function canvasSurface(canvas) {
   const w=canvas.clientWidth,h=canvas.clientHeight;
   const pixelRatio=Math.min(window.devicePixelRatio||1,2);
   const bw=Math.round(w*pixelRatio),bh=Math.round(h*pixelRatio);
   if(canvas.width!==bw||canvas.height!==bh){canvas.width=bw;canvas.height=bh;}
   const ctx=canvas.getContext('2d');
-  if(!ctx||!w||!h) return;
   ctx.setTransform(pixelRatio,0,0,pixelRatio,0,0);
-  ctx.fillStyle='#e9eee8';ctx.fillRect(0,0,w,h);
+  return {ctx,w,h};
+}
+
+const heroBodies=makeTable('design','open',0);
+function renderHero() {
+  const {ctx,w,h}=canvasSurface(byId('hero-view'));
+  ctx.clearRect(0,0,w,h);
+  if(!w||!h) return;
+  const source=cameraFrame(0,0,78*DEG,28*DEG,[0,0,0],1);
+  const pixels=heroBodies.flatMap(body=>body.verts.map(source.project));
+  const xs=pixels.map(p=>p[0]),ys=pixels.map(p=>p[1]);
+  const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+  const scale=Math.min(w*.86/(maxX-minX),h*.84/(maxY-minY));
+  const camera={depth:source.depth,project:p=>{
+    const [x,y]=source.project(p);
+    return [w/2+(x-(minX+maxX)/2)*scale,h/2+(y-(minY+maxY)/2)*scale];
+  }};
+  const [x,y]=camera.project([0,0,0]);
+  const shadow=ctx.createRadialGradient(0,0,0,0,0,1);
+  shadow.addColorStop(0,'#14244129');shadow.addColorStop(0.45,'#14244113');shadow.addColorStop(1,'#14244100');
+  ctx.save();ctx.translate(x,y+2);ctx.scale(430*scale,145*scale);
+  ctx.fillStyle=shadow;ctx.fillRect(-1,-1,2,2);ctx.restore();
+  paintFaces(ctx,heroBodies,camera,new Set());
+}
+
+function draw(view,bodies,env,hitIds) {
+  const {ctx,w,h}=canvasSurface(view.canvas);
+  if(!w||!h) return;
+  const studio=ctx.createLinearGradient(0,0,0,h);
+  studio.addColorStop(0,'#f8f9fc');studio.addColorStop(1,STUDIO.background);
+  ctx.fillStyle=studio;ctx.fillRect(0,0,w,h);
   const camera=projection(w,h), project=camera.project;
   const rear=env.wallY===undefined?-1050:env.wallY;
-  path2D(ctx,rect(-960,rear,960,1050).map(([x,y])=>[x,y,0]),project,'#e3e9df',null);
-  for(let i=-900;i<=900;i+=100) path2D(ctx,[[i,rear,0],[i,1050,0]],project,null,'#cdd8cc',0.6,false);
-  for(let i=Math.ceil(rear/100)*100;i<=1000;i+=100) path2D(ctx,[[-960,i,0],[960,i,0]],project,null,'#cdd8cc',0.6,false);
+  path2D(ctx,rect(-960,rear,960,1050).map(([x,y])=>[x,y,0]),project,STUDIO.floor,null);
+  for(let i=-900;i<=900;i+=100) path2D(ctx,[[i,rear,0],[i,1050,0]],project,null,STUDIO.grid,0.6,false);
+  for(let i=Math.ceil(rear/100)*100;i<=1000;i+=100) path2D(ctx,[[-960,i,0],[960,i,0]],project,null,STUDIO.grid,0.6,false);
 
   if(env.wallY!==undefined) {
     const wall=prism('wall','Wall',rect(-835,env.wallY-60,835,env.wallY),0,910,PALETTE.wall);
@@ -357,7 +507,7 @@ function draw(view,bodies,env,hitIds) {
     const col=prism('column','Column',plan,0,1180,PALETTE.col);
     const end=cfg.size/2+cfg.setback;
     ctx.save();ctx.setLineDash([4,4]);
-    path2D(ctx,[[COLUMN_START,COLUMN_START,1],[end,end,1]],project,null,'#3b786d',1.3,false);
+    path2D(ctx,[[COLUMN_START,COLUMN_START,1],[end,end,1]],project,null,STUDIO.accent,1.3,false);
     ctx.restore();
     paintFaces(ctx,[...bodies,col],camera,hitIds);
     if(state.plan) label(ctx,project,[position,position,1180],cfg.shape==='circle'?`Ø${cfg.size}`:`▯ ${cfg.size}`);
@@ -367,7 +517,7 @@ function draw(view,bodies,env,hitIds) {
   if(env.wallY!==undefined&&state.plan&&state.progress>=FOLD_PART) {
     const topY=view.kind==='baseline'?topRearAt300:1;
     ctx.save();ctx.setLineDash([3,2]);
-    path2D(ctx,[[300,env.wallY,0],[300,topY,H]],project,null,'#216649',1.6,false);
+    path2D(ctx,[[300,env.wallY,0],[300,topY,H]],project,null,STUDIO.accent,1.6,false);
     ctx.restore();
     label(ctx,project,[300,(env.wallY+topY)/2,H],`${mm(topY-env.wallY)}`);
   }
@@ -513,14 +663,8 @@ function footAssembly(angle) {
 }
 
 function mechanismCanvas(id) {
-  const el=byId(id),w=el.clientWidth,h=el.clientHeight;
-  const dpr=Math.min(window.devicePixelRatio||1,2);
-  if(el.width!==Math.round(w*dpr)||el.height!==Math.round(h*dpr)){
-    el.width=Math.round(w*dpr);el.height=Math.round(h*dpr);
-  }
-  const ctx=el.getContext('2d');
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  ctx.fillStyle='#eef0e9';ctx.fillRect(0,0,w,h);
+  const {ctx,w,h}=canvasSurface(byId(id));
+  ctx.fillStyle=STUDIO.background;ctx.fillRect(0,0,w,h);
   return {ctx,w,h};
 }
 
@@ -532,12 +676,9 @@ function mechanismCameras(inset,w,h,side=false) {
       [w/2+((inset?y-c[1]:x-c[0]))*scale,h/2-(z-c[2])*scale]};
   }
   const yaw=(inset?-65:-42)*DEG,tilt=(inset?32:25)*DEG;
-  const c=[Math.cos(yaw),Math.sin(yaw),0];
-  const right=[c[1],-c[0],0],up=[-c[0]*Math.sin(tilt),-c[1]*Math.sin(tilt),Math.cos(tilt)];
-  const depth=[c[0]*Math.cos(tilt),c[1]*Math.cos(tilt),Math.sin(tilt)];
   const center=inset?[0,125,16]:[130,0,195];
   const scale=Math.min(w/(inset?585:465),h/(inset?330:520));
-  return {depth,project:p=>[w/2+(dot(p,right)-dot(center,right))*scale,h/2-(dot(p,up)-dot(center,up))*scale]};
+  return cameraFrame(w,h,yaw,tilt,center,scale);
 }
 
 function renderMechanism() {
@@ -546,12 +687,12 @@ function renderMechanism() {
   const closeup=mechanismCanvas('mechanism-view'),section=mechanismCanvas('mechanism-side');
   const cam=mechanismCameras(inset,closeup.w,closeup.h),side=mechanismCameras(inset,section.w,section.h,true);
   if(!inset) {
-    path2D(closeup.ctx,rect(-115,-190,450,170).map(([x,y])=>[x,y,0]),cam.project,'#e0e7dc','#cbd6ca');
-    path2D(section.ctx,[[-75,0,0],[425,0,0]],side.project,null,'#bec9bf',1,false);
+    path2D(closeup.ctx,rect(-115,-190,450,170).map(([x,y])=>[x,y,0]),cam.project,STUDIO.floor,STUDIO.grid);
+    path2D(section.ctx,[[-75,0,0],[425,0,0]],side.project,null,STUDIO.grid,1,false);
   }
   paintFaces(closeup.ctx,meshes.full,cam,new Set());
   const pivot=inset?[0,0,0]:[ARM_WIDTH*0.85,0,AXLE];
-  path2D(closeup.ctx,meshes.axis,cam.project,null,'#29815c',2.4,false);
+  path2D(closeup.ctx,meshes.axis,cam.project,null,STUDIO.accent,2.4,false);
   paintFaces(section.ctx,meshes.side,side,new Set());
   const theta=a*DEG, radius=76;
   const arc=Array.from({length:19},(_,i)=>{
@@ -561,19 +702,19 @@ function renderMechanism() {
   });
   if(a>0) {
     section.ctx.save();section.ctx.setLineDash([4,3]);
-    path2D(section.ctx,[pivot,arc[0]],side.project,null,'#216649',1.2,false);
+    path2D(section.ctx,[pivot,arc[0]],side.project,null,STUDIO.accent,1.2,false);
     section.ctx.restore();
-    path2D(section.ctx,arc,side.project,null,'#216649',1.6,false);
+    path2D(section.ctx,arc,side.project,null,STUDIO.accent,1.6,false);
   }
   const [px,py]=side.project(pivot);
   section.ctx.beginPath();section.ctx.arc(px,py,4.5,0,2*Math.PI);
-  section.ctx.fillStyle='#216649';section.ctx.fill();
-  label(section.ctx,side.project,inset?[0,-13,34]:[-12,0,85],inset?'Front hinge axis':'Base arm pivot','#216649');
+  section.ctx.fillStyle=STUDIO.accent;section.ctx.fill();
+  label(section.ctx,side.project,inset?[0,-13,34]:[-12,0,85],inset?'Front hinge axis':'Base arm pivot',STUDIO.accent);
   byId('mechanism-value').textContent=`${Math.round(a)}°`;
   byId('mechanism-play').textContent=mechanism.animation?'Pause':a>=spec.max*0.5?spec.close:spec.open;
   byId('mechanism-side-caption').textContent=spec.caption;
   byId('mechanism-note').textContent=inset?
-    `The 300 × 250 mm laptop panel from the renderings pivots at its front edge and sits flush when closed. The rear edge currently rises about ${mm(250*Math.sin(theta))}. The green line marks the concealed hinge axis.`:
+    `The 300 × 250 mm laptop panel from the renderings pivots at its front edge and sits flush when closed. The rear edge currently rises about ${mm(250*Math.sin(theta))}. The blue line marks the concealed hinge axis.`:
     `One base arm rotates upward about a pivot at the bottom of the pedestal. The main model shows how each panel and its arm fold together. The storage recess and locking mechanism still need detailed design.`;
 }
 
@@ -612,6 +753,7 @@ byId('mechanism-play').addEventListener('click',()=>{
 
 new ResizeObserver(render).observe(byId('design-view'));
 new ResizeObserver(renderMechanism).observe(byId('mechanism-view'));
-resetCamera();render();renderMechanism();
+new ResizeObserver(renderHero).observe(byId('hero-view'));
+resetCamera();render();renderMechanism();renderHero();
 </script>
 </body></html>
