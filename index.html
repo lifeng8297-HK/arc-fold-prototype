@@ -129,7 +129,7 @@ input[type=range], input[type=checkbox] { accent-color: var(--accent); }
 </nav></header>
 <main id="top">
 <header class="header">
-  <div><div class="brand">CDT504 PRODUCT DESIGN</div><h1>Folding Table Prototype</h1><p>See how a four-panel table folds to fit a wall or slide around a column.</p><a class="hero-link" href="#comparison">Explore the 3D model ↓</a></div>
+  <div><div class="brand">CDT504 PRODUCT DESIGN</div><h1>Folding Table Prototype</h1><p>See how a four-panel table fits a wall, a column or a room corner.</p><a class="hero-link" href="#comparison">Explore the 3D model ↓</a></div>
   <canvas class="hero-model" id="hero-view" aria-label="ARC-FOLD table, fully open">ARC-FOLD table, fully open</canvas>
 </header>
 <section id="comparison" aria-labelledby="comparison-heading">
@@ -140,6 +140,7 @@ input[type=range], input[type=checkbox] { accent-color: var(--accent); }
       <button class="button mode" data-mode="open" aria-pressed="false">360° Fully Open</button>
       <button class="button mode" data-mode="wall" aria-pressed="true">180° Wall Fit</button>
       <button class="button mode" data-mode="column" aria-pressed="false">270° Column Fit</button>
+      <button class="button mode" data-mode="corner" aria-pressed="false">90° Corner Fit</button>
     </div>
     <div class="camera" role="group" aria-label="View controls">
       <div class="segments">
@@ -162,6 +163,7 @@ input[type=range], input[type=checkbox] { accent-color: var(--accent); }
   <div class="fields" id="wall-options">
     <label><input id="show-target" type="checkbox">Test Concept A at the 3 mm target gap</label>
   </div>
+  <div class="fields"><label>Inset laptop panel <input type="range" id="table-inset-angle" min="0" max="25" step="1" value="25" aria-label="Inset panel angle on the table"> <output id="table-inset-value" for="table-inset-angle">25°</output></label></div>
 </section>
 <div class="compare">
   <section class="model" aria-labelledby="design-heading">
@@ -202,6 +204,7 @@ input[type=range], input[type=checkbox] { accent-color: var(--accent); }
     <li>Both tables are 900 mm in diameter and 740 mm high, with an 18 mm tabletop and a Ø70 mm pedestal. Each base arm reaches 380 mm from the centre and is about 40 mm wide. The model represents hardware with simplified solid shapes.</li>
     <li>180° wall fit. Fold the rear two panels and their arms, then move the table as close to the wall as the component shapes allow. Measure both tables at x = ±300 mm from the tabletop centreline. Concept A has a straight rear edge with a uniform gap. The round baseline has separate readings at the point of tangency and the two ends of the diameter.</li>
     <li>270° column fit. Lower one panel, raise the corresponding arm and move the column relative to the table along the opening’s 45° bisector. Final setback is the distance from the column’s outer edge to each radial edge of the opening. The model samples the path every 2 mm or less and calculates signed clearance between each component’s plan footprint and the full-height column. Negative values indicate approximate overlap in plan.</li>
+    <li>90° corner fit. Keep one tabletop sector and its matching base arm along the corner bisector. The panel opposite the usable sector lowers and then swings under it in a proposed stowage motion. The wall gap comes from the estimated component envelopes. The extra pivot and single-arm stability still need detailed design and testing.</li>
     <li>The folding animation uses radial hinges and simplified base-arm motion. The model flags overlap between the panels and the pedestal. Locking, other internal clearances, load capacity and stability are outside the scope of this model.</li>
   </ul>
   <p>Dimensions, travel paths and clearances are model estimates. Specification references include Table 10 and the project targets and Lesson 5.</p>
@@ -217,6 +220,9 @@ const REACH = 380;
 const AXLE = 35;
 const ARM_WIDTH = 40;
 const ARM_HEIGHT = 24;
+const INSET_WIDTH = 300;
+const INSET_DEPTH = 250;
+const INSET_MAX = 25;
 const WALL_START = 585;
 const COLUMN_START = 570;
 const FOLD_PART = 0.55;
@@ -253,17 +259,65 @@ const quarter = [[seam,seam],...Array.from({length:33},(_,i)=>{
   return [R*Math.cos(a),R*Math.sin(a)];
 })];
 
-function leaf(i, fold) {
+function leaf(i, fold, mode) {
   const a=i*Math.PI/2, theta=fold*Math.PI/2;
   const pivot=H-T/2;
   // Opposite rear quarters share the wall-parallel diameter in the 180-degree state.
   const reflect = i===3;
+  const cornerSwing=mode==='corner'&&i===3;
+  const turn=cornerSwing?clamp((fold-.62)/.38,0,1)*135*DEG:0;
+  const down=cornerSwing?clamp(fold/.62,0,1)*Math.PI/2:theta;
   const pose=([x,y,z])=>{
-    const dy=y*Math.cos(theta)+(z-pivot)*Math.sin(theta);
-    const dz=pivot-y*Math.sin(theta)+(z-pivot)*Math.cos(theta);
-    return reflect ? [x,-dy,dz] : rotate([x,dy,dz],a);
+    if(mode==='corner'&&i===0) return [x*Math.cos(theta)+(z-pivot)*Math.sin(theta),y,
+      pivot-x*Math.sin(theta)+(z-pivot)*Math.cos(theta)];
+    const dy=y*Math.cos(down)+(z-pivot)*Math.sin(down);
+    const dz=pivot-y*Math.sin(down)+(z-pivot)*Math.cos(down);
+    return reflect ? rotate([x,-dy,dz],turn) : rotate([x,dy,dz],a);
   };
   return prism(`leaf${i}`,`${['Front-right','Front-left','Rear-left','Rear-right'][i]} tabletop panel`,quarter,H-T,H,PALETTE.oak,PALETTE.trim,pose);
+}
+
+function clipPanel(polygon, side) {
+  return polygon.flatMap((end,i)=>{
+    const start=polygon[(i+polygon.length-1)%polygon.length];
+    const a=side(start), b=side(end);
+    if((a>=0)===(b>=0)) return b>=0?[end]:[];
+    const t=a/(a-b), cut=[lerp(start[0],end[0],t),lerp(start[1],end[1],t)];
+    return b>=0?[cut,end]:[cut];
+  });
+}
+
+const insetHinge=413;
+const across=([x,y])=>(y-x)/Math.SQRT2;
+const along=([x,y])=>(x+y)/Math.SQRT2;
+const insetInner=insetHinge-INSET_DEPTH;
+const insetBand=clipPanel(clipPanel(quarter,p=>along(p)-(insetInner-1)),p=>insetHinge+1-along(p));
+const insetSurround=[
+  clipPanel(quarter,p=>insetInner-1-along(p)),
+  clipPanel(quarter,p=>along(p)-insetHinge-1),
+  clipPanel(insetBand,p=>across(p)-INSET_WIDTH/2-1),
+  clipPanel(insetBand,p=>-across(p)-INSET_WIDTH/2-1),
+];
+
+function insetTilt([x,y,z],angle) {
+  const a=angle*DEG;
+  return [x,y*Math.cos(a)-z*Math.sin(a),y*Math.sin(a)+z*Math.cos(a)];
+}
+
+function fittedQuarter(angle) {
+  const surround=insetSurround.map((polygon,i)=>{
+    const mesh=prism(`surround${i}`,'Front-left tabletop panel',polygon,H-T,H,PALETTE.oak,PALETTE.trim,
+      p=>rotate(p,Math.PI/2));
+    mesh.faces[1].stroke=false;
+    return mesh;
+  });
+  const place=point=>{
+    const [v,d,z]=insetTilt(point,angle),u=insetHinge-d;
+    return [-(u+v)/Math.SQRT2,(u-v)/Math.SQRT2,H+z];
+  };
+  const panel=prism('inset','Inset laptop panel',rect(-INSET_WIDTH/2,0,INSET_WIDTH/2,INSET_DEPTH),-T,0,
+    PALETTE.oak,'#8c6650',place);
+  return [...surround,panel];
 }
 
 function arm(i, amount, angleOffset = 45) {
@@ -280,10 +334,10 @@ function arm(i, amount, angleOffset = 45) {
   ];
 }
 
-function makeTable(kind, mode, fold) {
-  const folded = mode==='wall' ? [2,3] : mode==='column' ? [0] : [];
+function makeTable(kind, mode, fold, insetAngle = 0) {
+  const folded = mode==='wall' ? [2,3] : mode==='column' ? [0] : mode==='corner' ? [0,2,3] : [];
   const moving = i => kind==='design' && folded.includes(i) ? fold : 0;
-  const sheets=kind==='design' ? [0,1,2,3].map(i=>leaf(i,moving(i))) :
+  const sheets=kind==='design' ? [0,1,2,3].flatMap(i=>i===1?fittedQuarter(insetAngle):[leaf(i,moving(i),mode)]) :
     [prism('top','Round tabletop',polyCircle(R,0,0,96),H-T,H,PALETTE.oak,PALETTE.trim)];
   return [...sheets,prism('post','Pedestal',polyCircle(POST),AXLE,H-T,PALETTE.steel),
     prism('hub','Hub cap',polyCircle(POST+3),H,H+3,PALETTE.steel),
@@ -332,6 +386,10 @@ function polygonDistance(a,b) {
 function wallClearance(bodies, y) {
   return bodies.map(body=>({id:body.id,label:body.label,value:Math.min(...body.verts.map(p=>p[1]))-y}));
 }
+function cornerClearance(bodies, distance) {
+  return bodies.map(body=>({id:body.id,label:body.label,value:
+    distance-Math.max(...body.verts.map(([x,y])=>Math.max(x,-y)))}));
+}
 function nearest(readings) { return readings.reduce((a,b)=>a.value<=b.value?a:b); }
 function columnClearance(bodies, config, center) {
   const radius=config.size/2;
@@ -377,11 +435,12 @@ function leafPostClashes(bodies) {
 }
 
 const byId=id=>document.getElementById(id);
-const state={mode:'wall', progress:1, playing:false, yaw:65*DEG, tilt:32*DEG, zoom:1, plan:false};
+const state={mode:'wall', progress:1, playing:false, yaw:65*DEG, tilt:32*DEG, zoom:1, plan:false,insetAngle:INSET_MAX};
 const views=[{kind:'design',canvas:byId('design-view'),metrics:byId('design-metrics')},
   {kind:'baseline',canvas:byId('baseline-view'),metrics:byId('baseline-metrics')}];
 const wallLimiter=nearest(wallClearance(makeTable('design','wall',1),0));
 const contactGap=-wallLimiter.value;
+const cornerLimiter=nearest(cornerClearance(makeTable('design','corner',1),0));
 const topRearAt300=-Math.sqrt(R*R-300*300);
 let sweepMemo=null;
 function config() {
@@ -404,9 +463,9 @@ function cameraFrame(w,h,yaw,angle,center,scale) {
 }
 function projection(w,h) {
   const yaw=state.plan?Math.PI/2:state.yaw,angle=state.plan?Math.PI/2:state.tilt;
-  const columnMode=state.mode==='column';
+  const columnMode=state.mode==='column',cornerMode=state.mode==='corner';
   const scale=Math.min(w/(columnMode?1450:1130),h/(state.plan?(columnMode?1360:1150):(columnMode?1610:1210)))*state.zoom;
-  const center=state.plan?(columnMode?[125,125,0]:[0,-45,0]):(columnMode?[95,95,480]:[0,0,385]);
+  const center=state.plan?(columnMode?[125,125,0]:[0,-45,0]):(columnMode?[95,95,480]:cornerMode?[-75,75,400]:[0,0,385]);
   return cameraFrame(w,h,yaw,angle,center,scale);
 }
 
@@ -433,7 +492,7 @@ function paintFaces(ctx,meshes,camera,hitIds) {
     const shade=0.77+0.23*Math.abs(dot(normal,[-0.36,-0.30,0.88]))/(Math.hypot(...normal)||1);
     const hit=hitIds.has(body.id);
     path2D(ctx,face.points,project,colorShade(hit?PALETTE.hit:face.color,shade),
-      hit?'#8d2d23':colorShade(face.color,shade*0.91),hit?0.55:0.27);
+      face.stroke===false?null:hit?'#8d2d23':colorShade(face.color,shade*0.91),hit?0.55:0.27);
   }
 }
 
@@ -459,7 +518,7 @@ function canvasSurface(canvas) {
   return {ctx,w,h};
 }
 
-const heroBodies=makeTable('design','open',0);
+const heroBodies=makeTable('design','open',0,INSET_MAX);
 function renderHero() {
   const {ctx,w,h}=canvasSurface(byId('hero-view'));
   ctx.clearRect(0,0,w,h);
@@ -489,14 +548,22 @@ function draw(view,bodies,env,hitIds) {
   ctx.fillStyle=studio;ctx.fillRect(0,0,w,h);
   const camera=projection(w,h), project=camera.project;
   const rear=env.wallY===undefined?-1050:env.wallY;
-  path2D(ctx,rect(-960,rear,960,1050).map(([x,y])=>[x,y,0]),project,STUDIO.floor,null);
-  for(let i=-900;i<=900;i+=100) path2D(ctx,[[i,rear,0],[i,1050,0]],project,null,STUDIO.grid,0.6,false);
-  for(let i=Math.ceil(rear/100)*100;i<=1000;i+=100) path2D(ctx,[[-960,i,0],[960,i,0]],project,null,STUDIO.grid,0.6,false);
+  const rightEdge=env.cornerDistance??960;
+  path2D(ctx,rect(-960,rear,rightEdge,1050).map(([x,y])=>[x,y,0]),project,STUDIO.floor,null);
+  for(let i=-900;i<=rightEdge;i+=100) path2D(ctx,[[i,rear,0],[i,1050,0]],project,null,STUDIO.grid,0.6,false);
+  for(let i=Math.ceil(rear/100)*100;i<=1000;i+=100) path2D(ctx,[[-960,i,0],[rightEdge,i,0]],project,null,STUDIO.grid,0.6,false);
 
   if(env.wallY!==undefined) {
-    const wall=prism('wall','Wall',rect(-835,env.wallY-60,835,env.wallY),0,910,PALETTE.wall);
+    const wall=prism('wall','Wall',rect(-835,env.wallY-60,env.cornerDistance??835,env.wallY),0,910,PALETTE.wall);
     ctx.save();
     if(camera.depth[1]<0&&!state.plan) ctx.globalAlpha=0.38;
+    paintFaces(ctx,[wall],camera,new Set());
+    ctx.restore();
+  }
+  if(env.cornerDistance!==undefined) {
+    const wall=prism('side-wall','Side wall',rect(rightEdge,rear-60,rightEdge+60,835),0,910,PALETTE.wall);
+    ctx.save();
+    if(camera.depth[0]>0&&!state.plan) ctx.globalAlpha=0.38;
     paintFaces(ctx,[wall],camera,new Set());
     ctx.restore();
   }
@@ -516,10 +583,16 @@ function draw(view,bodies,env,hitIds) {
   }
   if(env.wallY!==undefined&&state.plan&&state.progress>=FOLD_PART) {
     const topY=view.kind==='baseline'?topRearAt300:1;
-    ctx.save();ctx.setLineDash([3,2]);
-    path2D(ctx,[[300,env.wallY,0],[300,topY,H]],project,null,STUDIO.accent,1.6,false);
-    ctx.restore();
-    label(ctx,project,[300,(env.wallY+topY)/2,H],`${mm(topY-env.wallY)}`);
+    const corner=env.cornerDistance!==undefined;
+    const x=corner?-300:300;
+    const dimension=(from,to)=>{
+      ctx.save();ctx.setLineDash([3,2]);
+      path2D(ctx,[from,to],project,null,STUDIO.accent,1.6,false);
+      ctx.restore();
+      label(ctx,project,from.map((v,i)=>(v+to[i])/2),mm(Math.hypot(from[0]-to[0],from[1]-to[1])));
+    };
+    dimension([x,env.wallY,H],[x,topY,H]);
+    if(corner) dimension([rightEdge,300,H],[-topY,300,H]);
   }
 }
 
@@ -536,7 +609,7 @@ function render() {
   const cfg=config();
   const analysis=state.mode==='column'?sweeps(cfg):null;
   for(const view of views) {
-    const bodies=makeTable(view.kind,state.mode,fold);
+    const bodies=makeTable(view.kind,state.mode,fold,state.insetAngle);
     const hits=new Set(leafPostClashes(bodies));
     const postClash=hits.size>0;
     if(postClash) hits.add('post');
@@ -560,6 +633,19 @@ function render() {
       card(view,`${folding?'Estimated final wall gap':'Current wall gap'} at ±300 mm`,mm(folding?endGap:gap),status,design?
         `Closest approach gives a ${mm(endGap)} gap, limited by stowed ${wallLimiter.label.toLowerCase()}.${postClash?' The folded panels also overlap the pedestal.':''}`:
         `Final gap is 0 mm at tangency and ${mm(R)} at both ends of the diameter.`,clear.value<-EPS||(reached&&design&&endGap>3));
+    } else if(state.mode==='corner') {
+      const design=view.kind==='design';
+      const stopDistance=design?-cornerLimiter.value:R;
+      const distance=lerp(WALL_START,stopDistance,move);
+      env.cornerDistance=distance;env.wallY=-distance;
+      const readings=cornerClearance(bodies,distance);
+      readings.filter(r=>r.value<-EPS).forEach(r=>hits.add(r.id));
+      const folding=p<FOLD_PART;
+      const clearance=(folding?stopDistance:distance)+(design?1:topRearAt300);
+      card(view,`${folding?'Estimated final gap':'Gap'} to each wall at 300 mm`,mm(clearance),
+        design?(folding?'Folding three panels and their arms':'One sector open · One base arm deployed'):'Round top · Two points of tangency',
+        design?`Nominal usable area: 0.16 m². The stowed ${cornerLimiter.label.toLowerCase()} limits how close the table can move.${postClash?' Folded panels overlap the pedestal.':''}`:
+          'The round top touches each wall at one point.',nearest(readings).value<-EPS);
     } else if(state.mode==='column') {
       const position=lerp(COLUMN_START,cfg.size/2+cfg.setback,move);
       env.column={cfg,position};
@@ -583,15 +669,19 @@ function render() {
   byId('column-options').hidden=state.mode!=='column';
   byId('wall-options').hidden=state.mode!=='wall';
   byId('size-label').textContent=cfg.shape==='square'?'Side length':'Diameter';
-  byId('stage').textContent=p===1?(state.mode==='wall'?'Final wall position':'Final column position'):
-    p<FOLD_PART?`Folding ${Math.round(fold*90)}°`:`${state.mode==='wall'?'Approach':'Side entry'} ${Math.round(move*100)}%`;
+  const finalPosition={wall:'Final wall position',column:'Final column position',corner:'Final corner position'};
+  byId('stage').textContent=p===1?(finalPosition[state.mode]??''):
+    p<FOLD_PART?(state.mode==='corner'?`Fold and stow ${Math.round(fold*100)}%`:`Folding ${Math.round(fold*90)}°`):
+      `${state.mode==='column'?'Side entry':'Approach'} ${Math.round(move*100)}%`;
+  byId('table-inset-angle').value=Math.round(state.insetAngle);
+  byId('table-inset-value').textContent=`${Math.round(state.insetAngle)}°`;
   byId('play').textContent=state.playing?'Pause':'Play Sequence';
   byId('plan').setAttribute('aria-pressed',String(state.plan));
   byId('perspective').setAttribute('aria-pressed',String(!state.plan));
 }
 
 function resetCamera() {
-  state.yaw=(state.mode==='column'?-10:65)*DEG;
+  state.yaw=(state.mode==='column'?-10:state.mode==='corner'?126:65)*DEG;
   state.tilt=34*DEG;state.zoom=1;state.plan=false;
 }
 let last=0, animation=0;
@@ -640,15 +730,14 @@ for(const {canvas} of views) {
     e.preventDefault();state.zoom=clamp(state.zoom*Math.exp(-e.deltaY*0.001),0.65,2.4);render();
   },{passive:false});
 }
-const mechanism={type:'inset',angles:{inset:25,foot:0},animation:0};
+const mechanism={type:'inset',angles:{inset:INSET_MAX,foot:0},animation:0};
 const mechanismSpec={
-  inset:{max:25,open:'Raise Panel',close:'Lower Panel',caption:'Section Through the Inset Panel'},
+  inset:{max:INSET_MAX,open:'Raise Panel',close:'Lower Panel',caption:'Section Through the Inset Panel'},
   foot:{max:90,open:'Stow Arm',close:'Deploy Arm',caption:'Section Through the Base Arm'}
 };
 
 function insetAssembly(angle) {
-  const a=angle*DEG;
-  const pose=([x,y,z])=>[x,y*Math.cos(a)-z*Math.sin(a),y*Math.sin(a)+z*Math.cos(a)];
+  const pose=point=>insetTilt(point,angle);
   const oak=polygon=>prism('host','Fixed tabletop',polygon,-18,0,PALETTE.oak,PALETTE.trim);
   const endRails=[oak(rect(-220,-62,220,-1)),oak(rect(-220,251,220,318))];
   const sideRails=[oak(rect(-220,-1,-151,251)),oak(rect(151,-1,220,251))];
@@ -714,11 +803,24 @@ function renderMechanism() {
   byId('mechanism-play').textContent=mechanism.animation?'Pause':a>=spec.max*0.5?spec.close:spec.open;
   byId('mechanism-side-caption').textContent=spec.caption;
   byId('mechanism-note').textContent=inset?
-    `The 300 × 250 mm laptop panel from the renderings pivots at its front edge and sits flush when closed. The rear edge currently rises about ${mm(250*Math.sin(theta))}. The blue line marks the concealed hinge axis.`:
+    `The table’s 300 × 250 mm laptop panel pivots at its front edge and sits flush when closed. The rear edge currently rises about ${mm(INSET_DEPTH*Math.sin(theta))}. The blue line marks the concealed hinge axis.`:
     `One base arm rotates upward about a pivot at the bottom of the pedestal. The main model shows how each panel and its arm fold together. The storage recess and locking mechanism still need detailed design.`;
 }
 
 function stopMechanism() {cancelAnimationFrame(mechanism.animation);mechanism.animation=0;}
+function updateMechanismAngle(type,angle) {
+  mechanism.angles[type]=angle;
+  byId('mechanism-angle').value=Math.round(angle);
+  if(type==='inset'){state.insetAngle=angle;render();}
+  renderMechanism();
+}
+byId('table-inset-angle').addEventListener('input',e=>{
+  if(mechanism.type==='inset') {
+    stopMechanism();updateMechanismAngle('inset',Number(e.target.value));
+  } else {
+    state.insetAngle=Number(e.target.value);mechanism.angles.inset=state.insetAngle;render();
+  }
+});
 for(const button of document.querySelectorAll('.mechanism-tab')) button.addEventListener('click',()=>{
   stopMechanism();mechanism.type=button.dataset.mechanism;
   document.querySelectorAll('.mechanism-tab').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
@@ -727,25 +829,22 @@ for(const button of document.querySelectorAll('.mechanism-tab')) button.addEvent
   renderMechanism();
 });
 byId('mechanism-angle').addEventListener('input',e=>{
-  stopMechanism();mechanism.angles[mechanism.type]=Number(e.target.value);renderMechanism();
+  stopMechanism();updateMechanismAngle(mechanism.type,Number(e.target.value));
 });
 byId('mechanism-play').addEventListener('click',()=>{
   if(mechanism.animation){stopMechanism();renderMechanism();return;}
   const type=mechanism.type,start=mechanism.angles[type],max=mechanismSpec[type].max;
   const end=start>=max*0.5?0:max;
-  const slider=byId('mechanism-angle');
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    mechanism.angles[type]=end;slider.value=end;renderMechanism();return;
+    updateMechanismAngle(type,end);return;
   }
   let begin;
   function frame(now) {
     begin??=now;
     const p=clamp((now-begin)/850,0,1);
     const smooth=p*p*(3-2*p);
-    mechanism.angles[type]=lerp(start,end,smooth);
-    slider.value=Math.round(mechanism.angles[type]);
     mechanism.animation=p<1?requestAnimationFrame(frame):0;
-    renderMechanism();
+    updateMechanismAngle(type,lerp(start,end,smooth));
   }
   mechanism.animation=requestAnimationFrame(frame);
   renderMechanism();
