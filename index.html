@@ -204,7 +204,7 @@ input[type=range], input[type=checkbox] { accent-color: var(--accent); }
     <li>Both tables are 900 mm in diameter and 740 mm high, with an 18 mm tabletop and a Ø70 mm pedestal. Each base arm reaches 380 mm from the centre and is about 40 mm wide. The model represents hardware with simplified solid shapes.</li>
     <li>180° wall fit. Fold the rear two panels and their arms, then move the table as close to the wall as the component shapes allow. Measure both tables at x = ±300 mm from the tabletop centreline. Concept A has a straight rear edge with a uniform gap. The round baseline has separate readings at the point of tangency and the two ends of the diameter.</li>
     <li>270° column fit. Lower one panel, raise the corresponding arm and move the column relative to the table along the opening’s 45° bisector. Final setback is the distance from the column’s outer edge to each radial edge of the opening. The model samples the path every 2 mm or less and calculates signed clearance between each component’s plan footprint and the full-height column. Negative values indicate approximate overlap in plan.</li>
-    <li>90° corner fit. Keep one tabletop sector and its matching base arm along the corner bisector. The opposite panel lowers and swings to the right, and the right panel folds beside it with a 4 mm gap between the faces. This sequence assumes sliding hinges and an extra pivot. The wall gap comes from the estimated component envelopes. Hardware and single-arm stability still need detailed design and testing.</li>
+    <li>90° corner fit. Lower the left and right tabletop panels first. Then fold the last panel to the right in one motion. It stacks beside the right panel with a 4 mm gap. One sector stays open above the arm along the corner bisector. This motion assumes sliding hinges and an extra pivot. Hardware and single-arm stability still need testing.</li>
     <li>The folding animation uses radial hinges and simplified base-arm motion. The model flags overlap between the panels and the pedestal. Locking, other internal clearances, load capacity and stability are outside the scope of this model.</li>
   </ul>
   <p>Dimensions, travel paths and clearances are model estimates. Specification references include Table 10 and the project targets and Lesson 5.</p>
@@ -227,6 +227,9 @@ const CORNER_DROP = 12;
 const CORNER_RIGHT_SLIDE = 38;
 const CORNER_LEFT_SLIDE = 43;
 const CORNER_STACK_GAP = 4;
+const CORNER_SIDE_END = .43;
+const CORNER_PANELS_END = .86;
+const CORNER_RIGHT_OFFSET = 24;
 const WALL_START = 585;
 const COLUMN_START = 570;
 const FOLD_PART = 0.55;
@@ -270,21 +273,21 @@ function foldDown(radius,z,theta) {
 }
 
 function cornerLeafPose(i,fold,[x,y,z]) {
-  const slide=clamp((i===3?fold:fold-.56)/.09,0,1);
+  const slide=clamp((i===3?fold-CORNER_SIDE_END:fold)/.09,0,1);
   // Clear the pedestal horizontally before dropping below the tabletop.
   const reach=clamp(slide/.75,0,1);
   const sink=CORNER_DROP*clamp((slide-.75)/.25,0,1);
   if(i===3) {
-    const drop=clamp((fold-.09)/.24,0,1);
-    const swing=clamp((fold-.33)/.23,0,1);
-    const [edge,height]=foldDown(y,z,drop*Math.PI/2);
-    const layer=(8+T+CORNER_STACK_GAP)*swing;
+    const swing=clamp((fold-CORNER_SIDE_END-.09)/(CORNER_PANELS_END-CORNER_SIDE_END-.09),0,1);
+    const [edge,height]=foldDown(y,z,swing*Math.PI/2);
+    // Finish on the outer face of the already lowered right panel.
+    const layer=(CORNER_RIGHT_OFFSET-T-CORNER_STACK_GAP)*swing;
     return rotate([x+CORNER_RIGHT_SLIDE*reach,-edge+layer,height-sink],swing*Math.PI/2);
   }
-  const drop=clamp((fold-.65)/.21,0,1);
-  const settle=clamp((drop-.75)/.25,0,1);
+  const drop=clamp((fold-.09)/(CORNER_SIDE_END-.09),0,1);
+  const settle=clamp((drop-.9)/.1,0,1);
   const [edge,height]=foldDown(i===0?x:y,z,drop*Math.PI/2);
-  return i===0?[edge-8*settle,y+CORNER_RIGHT_SLIDE*reach,height-sink]:
+  return i===0?[edge-CORNER_RIGHT_OFFSET*settle,y+CORNER_RIGHT_SLIDE*reach,height-sink]:
     [-x-CORNER_LEFT_SLIDE*reach,-edge+3*settle,height-sink];
 }
 
@@ -363,7 +366,7 @@ function makeTable(kind, mode, fold, insetAngle = 0) {
     [prism('top','Round tabletop',polyCircle(R,0,0,96),H-T,H,PALETTE.oak,PALETTE.trim)];
   return [...sheets,prism('post','Pedestal',polyCircle(POST),AXLE,H-T,PALETTE.steel),
     prism('hub','Hub cap',polyCircle(POST+3),H,H+3,PALETTE.steel),
-    ...[0,1,2,3].flatMap(i=>arm(i,mode==='corner'?clamp((moving(i)-.86)/.14,0,1):moving(i)))];
+    ...[0,1,2,3].flatMap(i=>arm(i,mode==='corner'?clamp((moving(i)-CORNER_PANELS_END)/(1-CORNER_PANELS_END),0,1):moving(i)))];
 }
 
 function cross([ax,ay],[bx,by],[cx,cy]) { return (bx-ax)*(cy-ay)-(by-ay)*(cx-ax); }
@@ -692,8 +695,9 @@ function render() {
   byId('wall-options').hidden=state.mode!=='wall';
   byId('size-label').textContent=cfg.shape==='square'?'Side length':'Diameter';
   const finalPosition={wall:'Final wall position',column:'Final column position',corner:'Final corner position'};
+  const cornerStage=fold<CORNER_SIDE_END?'Fold left and right panels':fold<CORNER_PANELS_END?'Fold last panel to the right':'Stow base arms';
   byId('stage').textContent=p===1?(finalPosition[state.mode]??''):
-    p<FOLD_PART?(state.mode==='corner'?`Fold and stow ${Math.round(fold*100)}%`:`Folding ${Math.round(fold*90)}°`):
+    p<FOLD_PART?(state.mode==='corner'?cornerStage:`Folding ${Math.round(fold*90)}°`):
       `${state.mode==='column'?'Side entry':'Approach'} ${Math.round(move*100)}%`;
   byId('table-inset-angle').value=Math.round(state.insetAngle);
   byId('table-inset-value').textContent=`${Math.round(state.insetAngle)}°`;
@@ -710,7 +714,7 @@ let last=0, animation=0;
 function stop() {state.playing=false;cancelAnimationFrame(animation);animation=0;}
 function playFrame(time) {
   if(!state.playing) return;
-  if(last) state.progress=Math.min(1,state.progress+(time-last)/5200);
+  if(last) state.progress=Math.min(1,state.progress+(time-last)/(state.mode==='corner'?6600:5200));
   last=time;
   if(state.progress>=1) stop();
   render();
