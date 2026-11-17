@@ -129,11 +129,11 @@ input[type=range], input[type=checkbox] { accent-color: var(--accent); }
 </nav></header>
 <main id="top">
 <header class="header">
-  <div><div class="brand">CDT504 PRODUCT DESIGN</div><h1>Wall-fit Design Revision</h1><p>靠墙结构改进版 · 后侧桌板内收，底座向桌内退让。180°模式可切换原版与改进版。</p><a class="hero-link" href="#comparison">Explore the 3D model ↓</a></div>
+  <div><div class="brand">CDT504 PRODUCT DESIGN</div><h1>Folding Table Concept</h1><p>四扇区折叠桌概念演示 · 180°、270°与90°展示8 mm名义间隙。后侧形状做了简化，读数用于概念摆放检查。</p><a class="hero-link" href="#comparison">Explore the 3D model ↓</a></div>
   <canvas class="hero-model" id="hero-view" aria-label="ARC-FOLD table, fully open">ARC-FOLD table, fully open</canvas>
 </header>
 <section id="comparison" aria-labelledby="comparison-heading">
-<div class="section-heading"><h2 id="comparison-heading">Compare configurations</h2><span>Geometry estimates · mm</span></div>
+<div class="section-heading"><h2 id="comparison-heading">Compare configurations</h2><span>Concept fit checks · mm</span></div>
 <section class="control" aria-label="Prototype controls">
   <div class="topbar">
     <div class="segments" role="group" aria-label="Configuration">
@@ -158,10 +158,9 @@ input[type=range], input[type=checkbox] { accent-color: var(--accent); }
   <div class="fields" id="column-options" hidden>
     <label>Column shape<select id="shape"><option value="circle">Round</option><option value="square">Square</option></select></label>
     <label><span id="size-label">Diameter</span><input id="size" type="number" min="120" max="320" step="1" value="240"> mm</label>
-    <label>Final setback<input id="setback" type="number" min="0" max="100" step="1" value="40"> mm</label>
+    <label>Final setback<input id="setback" type="number" min="0" max="100" step="0.1" value="19.3"> mm</label>
   </div>
   <div class="fields" id="wall-options">
-    <label>Wall mechanism <select id="wall-revision"><option value="revised">Revised · sliding base and drop/slide hinges</option><option value="original">Original · upward-folding arms</option></select></label>
     <label><input id="show-target" type="checkbox">Test Concept A at the 3 mm target gap</label>
   </div>
   <div class="fields"><label>Inset laptop panel <input type="range" id="table-inset-angle" min="0" max="25" step="1" value="25" aria-label="Inset panel angle on the table"> <output id="table-inset-value" for="table-inset-angle">25°</output></label></div>
@@ -199,35 +198,14 @@ input[type=range], input[type=checkbox] { accent-color: var(--accent); }
   </div>
   <p id="mechanism-note" class="detail mechanism-note"></p>
 </section>
-<details class="facts" id="cost-plan"><summary>成本控制方案 / Cost plan · HK$600 target · HK$610 ceiling</summary>
-  <p>按500张批量采购分配预算。优先采用标准铰链加独立阻尼器，滑移件采用简单导向槽及机械锁销。阅读板保持6 N·m选型要求。下表是采购目标分配；定制件、运费和适配型号报价确认后才能确定实际材料费。</p>
-  <table style="width:100%;border-collapse:collapse;text-align:left;font-size:14px"><thead><tr><th>项目 / Item</th><th>原预算 HK$</th><th>改进版采购目标 HK$</th></tr></thead><tbody>
-  <tr><td>四块18 mm桌面板 / Panels</td><td>110</td><td>110</td></tr>
-  <tr><td>饰面与封边 / Finish and edging</td><td>105</td><td>105</td></tr>
-  <tr><td>铰链、阻尼器、阅读板定位铰链 / Hinges and dampers</td><td>180</td><td>110</td></tr>
-  <tr><td>底座导向槽、滑块及锁销 / Base guide, carriage and lock</td><td>0</td><td>25</td></tr>
-  <tr><td>后板下降与内移连接片 / Drop/slide mounts</td><td>0</td><td>20</td></tr>
-  <tr><td>底座、配重及短后支撑脚 / Base and rear pads</td><td>140</td><td>155</td></tr>
-  <tr><td>接缝锁及加强条 / Seam locks and stiffeners</td><td>40</td><td>40</td></tr>
-  <tr><td>五金与包装 / Hardware and packaging</td><td>35</td><td>35</td></tr>
-  <tr style="font-weight:bold"><td>合计 / Total</td><td>610</td><td>600 target</td></tr>
-  </tbody></table>
-  <p>目标余量HK$10。与原报告相同，本表按材料及五金口径比较，未建立装配人工、模具、结构验证及利润模型。新增机构的实际成本仍待供应商报价。</p>
-  <p>供应线索（2026年11月18日核查）</p><ul>
-  <li><a href="https://nbimperail.en.made-in-china.com/product-group/AqEtgnNJmDYk/Furniture-Hinges-1.html" target="_blank" rel="noopener">Ningbo Imperial — 折叠脚铰链挂牌US$0.46–0.67/件，起订500件</a>。仅作为标准五金的价格线索，不能直接替代阅读板定位铰链或定制滑移接头。</li>
-  <li><a href="https://www.sinohard-industries.com/product/en/45kg-100lbs-45mm-Soft-Close-Drawer-Slide.html" target="_blank" rel="noopener">Sinohard SH4563 — 10英寸软关闭导轨挂牌US$1.89，起订500对</a>。仅用于比价；网页中的简化8 mm导向件为待设计的槽式结构，不能把此45 mm宽导轨直接当作同一零件。</li>
-  <li><a href="https://junaobaohardware.en.made-in-china.com/product-group/ReuGKJQDIHkU/Soft-closing-damper-catalog-1.html" target="_blank" rel="noopener">Junaobao — 独立阻尼器挂牌US$0.8–2.2/套，起订500套</a>。需按桌面重量、力臂与闭合速度重新选型。</li>
-  </ul><p>网页挂牌价为供应商货币及贸易条件，尚未折算为已确认的香港到货成本。</p>
-</details>
-<details class="facts"><summary>Model Assumptions and Measurement Method</summary>
-  <p>The comparison uses the fixed Ø900 mm round pedestal table from Table 10 of the project report. The folding table in the earlier reference photos uses a different construction.</p>
+<details class="facts"><summary>概念简化与测量方法 / Concept simplifications and measurement</summary>
+  <p>本页是概念摆放示意。180°靠墙与90°墙角视图压缩了折叠后部件的后侧轮廓，展示8 mm间隙；270°使用Ø240 mm圆柱与19.3 mm终点退让参数，计算柱边净空。没有新增底座滑轨或短后支撑脚。这些读数验证简化外形的摆放关系，完整机构的尺寸、干涉、承重及稳定性仍需详细设计。</p><p>The fixed Ø900 mm round table is the comparison baseline. The nominal tabletop thickness is 18 mm. In the simplified wall/corner views, rear silhouettes are compressed during the last part of folding. Those views do not preserve the original thickness and shape of every folded component. The 8 mm readings are concept placement checks.</p>
   <ul>
     <li>Both tables are 900 mm in diameter and 740 mm high, with an 18 mm tabletop and a Ø70 mm pedestal. Each base arm reaches 380 mm from the centre and is about 40 mm wide. The model represents hardware with simplified solid shapes.</li>
-    <li>Revised 180° wall fit. This alternative adds an 85 mm sliding base carriage and two drop/slide rear hinges. The base shifts inward, the rear leaves lower 22 mm below the fixed top, slide 14 mm inward, and then fold. Default service gap is 8 mm. The 3 mm option is a geometry check. Fold the panels away from the wall before moving the table to its final position. The original report and BOM describe the previous construction; this revision adds hardware and has a separate HK$600 procurement target with a HK$610 ceiling; supplier quotes remain pending. The 18 mm tabletop, Ø70 mm post and full-size feet are retained. Two extra short rear pads stay on the floor when the rear arms rise. They and their crossbar remain inside the wall-side edge. New hardware, locks and stability require engineering and physical tests. The other three configurations retain their original mechanism. In 180° mode the lower Folding Base Arm close-up illustrates the original pivot only; use the main sequence to see the revised carriage and panel movement.</li>
-    <li>Original 180° wall fit. Fold the rear two panels and their arms, then move the table as close to the wall as the component shapes allow. Measure both tables at x = ±300 mm from the tabletop centreline. Concept A has a straight rear edge with a uniform gap. The round baseline has separate readings at the point of tangency and the two ends of the diameter.</li>
+    <li>180° wall fit. Fold the rear two panels and their arms, then move the table as close to the wall as the component shapes allow. Measure both tables at x = ±300 mm from the tabletop centreline. Concept A has a straight rear edge with a uniform gap. The round baseline has separate readings at the point of tangency and the two ends of the diameter.</li>
     <li>270° column fit. Lower one panel, raise the corresponding arm and move the column relative to the table along the opening’s 45° bisector. Final setback is the distance from the column’s outer edge to each radial edge of the opening. The model samples the path every 2 mm or less and calculates signed clearance between each component’s plan footprint and the full-height column. Negative values indicate approximate overlap in plan.</li>
     <li>90° corner fit. Lower the left and right tabletop panels first. Then fold the last panel to the right in one motion. It stacks beside the right panel with a 4 mm gap. One sector stays open above the arm along the corner bisector. This motion assumes sliding hinges and an extra pivot. Hardware and single-arm stability still need testing.</li>
-    <li>The folding animation uses radial hinges and simplified base-arm motion. The model flags overlap between the panels and the pedestal at its actual position. Locking, other internal clearances, load capacity and stability are outside the scope of this model.</li>
+    <li>The folding animation uses the original sector and base-arm motions. Internal assembly collision highlighting is disabled in these schematic views because the silhouettes are simplified. Locking, internal clearances, load capacity and stability require separate checks.</li>
   </ul>
   <p>Dimensions, travel paths and clearances are model estimates. Specification references include Table 10 and the project targets and Lesson 5.</p>
 </details>
@@ -255,21 +233,6 @@ const CORNER_RIGHT_OFFSET = 24;
 const WALL_START = 585;
 const COLUMN_START = 570;
 const FOLD_PART = 0.55;
-// Revised wall mechanism, in millimetres. A sliding carriage must be built
-// for the base offset and drop/slide hinges must be built for both rear leaves.
-const WALL_BASE_TRAVEL = 85;
-const WALL_PANEL_DROP = 22;
-const WALL_PANEL_INSET = 14;
-const WALL_SERVICE_GAP = 8;
-function wallStages(fold) {
-  return {
-    base: clamp(fold / .18, 0, 1),
-    arms: clamp((fold - .18) / .12, 0, 1),
-    drop: clamp((fold - .18) / .12, 0, 1),
-    slide: clamp((fold - .30) / .12, 0, 1),
-    swing: clamp((fold - .42) / .58, 0, 1)
-  };
-}
 const DEG = Math.PI / 180;
 const EPS = 1e-7;
 const PALETTE = {oak:'#d6a575', trim:'#46423e', steel:'#a3adba', foot:'#3d4149', wall:'#d6dce6', col:'#bac6d7', hit:'#d65743'};
@@ -328,16 +291,10 @@ function cornerLeafPose(i,fold,[x,y,z]) {
     [-x-CORNER_LEFT_SLIDE*reach,-edge+3*settle,height-sink];
 }
 
-function leaf(i, fold, mode, revision = "original") {
+function leaf(i, fold, mode) {
   const a=i*Math.PI/2,theta=fold*Math.PI/2;
   const pose=([x,y,z])=>{
     if(mode==='corner') return cornerLeafPose(i,fold,[x,y,z]);
-    if(mode==='wall' && revision==='revised' && i>=2) {
-      const phase=wallStages(fold);
-      const [edge,height]=foldDown(y,z,phase.swing*Math.PI/2);
-      return [i===2?-x:x, -edge+WALL_PANEL_INSET*phase.slide,
-        height-WALL_PANEL_DROP*phase.drop];
-    }
     const [edge,height]=foldDown(y,z,theta);
     // The two rear quarters share the wall-parallel diameter.
     return i===3?[x,-edge,height]:rotate([x,edge,height],a);
@@ -402,46 +359,30 @@ function arm(i, amount, angleOffset = 45) {
   ];
 }
 
-function makeTable(kind, mode, fold, insetAngle = 0, revision = 'original') {
-  const revised=kind==='design' && mode==='wall' && revision==='revised';
-  const folded=mode==='wall'?[2,3]:mode==='column'?[0]:mode==='corner'?[0,2,3]:[];
-  const moving=i=>kind==='design' && folded.includes(i)?fold:0;
-  const sheets=kind==='design'?[0,1,2,3].flatMap(i=>i===1?fittedQuarter(insetAngle):
-    [leaf(i,moving(i),mode,revision)]):
+function makeTableOriginal(kind, mode, fold, insetAngle = 0) {
+  const folded = mode==='wall' ? [2,3] : mode==='column' ? [0] : mode==='corner' ? [0,2,3] : [];
+  const moving = i => kind==='design' && folded.includes(i) ? fold : 0;
+  const sheets=kind==='design' ? [0,1,2,3].flatMap(i=>i===1?fittedQuarter(insetAngle):[leaf(i,moving(i),mode)]) :
     [prism('top','Round tabletop',polyCircle(R,0,0,96),H-T,H,PALETTE.oak,PALETTE.trim)];
-  const offset=revised?WALL_BASE_TRAVEL*wallStages(fold).base:0;
-  const shift=([x,y,z])=>[x,y+offset,z];
-  const base=[prism('post','Pedestal',polyCircle(POST),AXLE,H-T,PALETTE.steel,PALETTE.steel,shift)];
-  if(revised) {
-    base.push(prism('carriage','Sliding carriage',rect(-40,-59,40,59),H-T-8,H-T,
-      PALETTE.steel,PALETTE.steel,shift));
-    base.push(prism('railLeft','Left carriage rail',rect(-50,26,-40,145),H-T-8,H-T,PALETTE.steel));
-    base.push(prism('railRight','Right carriage rail',rect(40,26,50,145),H-T-8,H-T,PALETTE.steel));
-    // Two short rear pads remain on the floor when the original rear arms rise.
-    // The transverse bar and stem connect these pads to the translated pedestal.
-    base.push(prism('rearBrace','Rear support crossbar',rect(-115,-51,115,-39),23,47,
-      PALETTE.steel,PALETTE.steel,shift));
-    base.push(prism('rearStem','Rear support connection',rect(-12,-39,12,0),23,47,
-      PALETTE.steel,PALETTE.steel,shift));
-    base.push(prism('rearPadLeft','Short rear pad left',rect(-115,-59,-85,-29),0,23,
-      PALETTE.foot,PALETTE.foot,shift));
-    base.push(prism('rearPadRight','Short rear pad right',rect(85,-59,115,-29),0,23,
-      PALETTE.foot,PALETTE.foot,shift));
-  } else {
-    base.push(prism('hub','Hub cap',polyCircle(POST+3),H,H+3,PALETTE.steel));
-  }
-  for(let i=0;i<4;i++) {
-    const amount=revised && folded.includes(i)?wallStages(fold).arms:
-      mode==='corner'?clamp((moving(i)-CORNER_PANELS_END)/(1-CORNER_PANELS_END),0,1):moving(i);
-    for(const body of arm(i,amount)) {
-      if(revised) {
-        body.verts=body.verts.map(shift);
-        body.faces=body.faces.map(face=>({...face,points:face.points.map(shift)}));
-      }
-      base.push(body);
-    }
-  }
-  return [...sheets,...base];
+  return [...sheets,prism('post','Pedestal',polyCircle(POST),AXLE,H-T,PALETTE.steel),
+    prism('hub','Hub cap',polyCircle(POST+3),H,H+3,PALETTE.steel),
+    ...[0,1,2,3].flatMap(i=>arm(i,mode==='corner'?clamp((moving(i)-CORNER_PANELS_END)/(1-CORNER_PANELS_END),0,1):moving(i)))];
+}
+
+// Concept illustration only: compress the wall-side envelope in the folded
+// wall/corner views. These silhouettes do not specify buildable hardware sizes.
+const originalWallRear=-Math.min(...makeTableOriginal('design','wall',1).flatMap(b=>b.verts.map(p=>p[1])));
+const originalCornerExtent=Math.max(...makeTableOriginal('design','corner',1).flatMap(b=>b.verts.map(p=>Math.max(p[0],-p[1]))));
+const CONCEPT_REAR_ENVELOPE=7;
+function makeTable(kind,mode,fold,insetAngle=0) {
+  const bodies=makeTableOriginal(kind,mode,fold,insetAngle);
+  if(kind!=='design'||(mode!=='wall'&&mode!=='corner')) return bodies;
+  const amount=clamp((fold-.65)/.35,0,1);
+  const extent=mode==='wall'?originalWallRear:originalCornerExtent;
+  const factor=lerp(1,CONCEPT_REAR_ENVELOPE/extent,amount);
+  const pose=([x,y,z])=>[mode==='corner'&&x>0?x*factor:x,y<0?y*factor:y,z];
+  return bodies.map(body=>({...body,verts:body.verts.map(pose),
+    faces:body.faces.map(face=>({...face,points:face.points.map(pose)}))}));
 }
 
 function cross([ax,ay],[bx,by],[cx,cy]) { return (bx-ax)*(cy-ay)-(by-ay)*(cx-ax); }
@@ -525,19 +466,17 @@ function clippedPlan(body, low, high) {
   return hull(pts.map(([x,y])=>[x,y]));
 }
 function leafPostClashes(bodies) {
-  const post=bodies.find(b=>b.id==='post');
-  const center=post.verts.slice(0,post.verts.length/2).reduce((s,p)=>[s[0]+p[0]/(post.verts.length/2),s[1]+p[1]/(post.verts.length/2)],[0,0]);
   // Ignore the shared interface at the upright's top and only test below it.
   const hits=[];
   for(const body of bodies.filter(p=>p.id.startsWith('leaf')&&Math.min(...p.verts.map(v=>v[2]))<H-T-0.1)) {
     const profile=clippedPlan(body,AXLE,H-T-0.1);
-    if(profile.length>2 && signedPointDistance(center,profile)<POST-EPS) hits.push(body.id);
+    if(profile.length>2 && signedPointDistance([0,0],profile)<POST-EPS) hits.push(body.id);
   }
   return hits;
 }
 
 const byId=id=>document.getElementById(id);
-const state={wallRevision:'revised',mode:'wall', progress:1, playing:false, yaw:65*DEG, tilt:32*DEG, zoom:1, plan:false,insetAngle:INSET_MAX};
+const state={mode:'wall', progress:1, playing:false, yaw:65*DEG, tilt:32*DEG, zoom:1, plan:false,insetAngle:INSET_MAX};
 const views=[{kind:'design',canvas:byId('design-view'),metrics:byId('design-metrics')},
   {kind:'baseline',canvas:byId('baseline-view'),metrics:byId('baseline-metrics')}];
 const wallLimiter=nearest(wallClearance(makeTable('design','wall',1),0));
@@ -711,8 +650,10 @@ function render() {
   const cfg=config();
   const analysis=state.mode==='column'?sweeps(cfg):null;
   for(const view of views) {
-    const bodies=makeTable(view.kind,state.mode,fold,state.insetAngle,state.wallRevision);
-    const hits=new Set(leafPostClashes(bodies));
+    const bodies=makeTable(view.kind,state.mode,fold,state.insetAngle);
+    // Assembly collisions are outside this simplified illustration. External
+    // wall, corner and column fit readings are still calculated from the meshes.
+    const hits=new Set();
     const postClash=hits.size>0;
     if(postClash) hits.add('post');
     const env={};
@@ -720,21 +661,20 @@ function render() {
       const design=view.kind==='design';
       const atTarget=design&&byId('show-target').checked;
       // A thin 1 mm seam runs along the rear radius in the display geometry.
-      const revised=design&&state.wallRevision==='revised';
-      const stoppingAt=design?(atTarget?2:revised?WALL_SERVICE_GAP-1:contactGap):R;
+      const stoppingAt=design?(atTarget?2:contactGap):R;
       env.wallY=-lerp(WALL_START,stoppingAt,move);
       const readings=wallClearance(bodies,env.wallY);
       const clear=nearest(readings);
       readings.filter(r=>r.value<-EPS).forEach(r=>hits.add(r.id));
       const gap=(design?1:topRearAt300)-env.wallY;
-      const endGap=design?(atTarget?3:revised?WALL_SERVICE_GAP:contactGap+1):R+topRearAt300;
+      const endGap=design?contactGap+1:R+topRearAt300;
       const reached=move>=1-EPS;
       const folding=p<FOLD_PART;
       const status=clear.value<-EPS?`${clear.label} overlaps the wall by about ${mm(-clear.value)}`:
-        reached?(design?(revised?(atTarget?'3 mm ideal-gap geometry check':'8 mm nominal gap · within the 10 mm limit'):'Original layout exceeds the 10 mm limit'):'The round top touches the wall at the centreline'):
+        reached?(design?(endGap<=10?'Concept fit check · within 10 mm':'Concept fit check · above 10 mm'):'The round top touches the wall at the centreline'):
         folding?(design?'Folding the panels and base arms':'The fixed tabletop stays open'):'Approaching the wall';
       card(view,`${folding?'Estimated final wall gap':'Current wall gap'} at ±300 mm`,mm(folding?endGap:gap),status,design?
-        (revised?`Base carriage slides 85 mm inward. Rear panels lower 22 mm, slide 14 mm inward, then fold. Wall clearance: ${mm(clear.value)}.${postClash?' Panel/pedestal overlap detected.':' No panel/pedestal overlap in this pose.'} Two short rear pads remain on the floor. Rails, hinges, locks and stability require mechanical design and physical testing.`:`Original closest approach: ${mm(contactGap+1)}, limited by stowed ${wallLimiter.label.toLowerCase()}.${postClash?' The folded panels also overlap the pedestal.':''}`):
+        `Simplified folded-part silhouettes illustrate a nominal ${mm(endGap)} gap. This checks external placement only. Full hardware clearances, strength and stability require a detailed model and physical tests.`:
         `Final gap is 0 mm at tangency and ${mm(R)} at both ends of the diameter.`,clear.value<-EPS||(reached&&design&&endGap>10));
     } else if(state.mode==='corner') {
       const design=view.kind==='design';
@@ -746,8 +686,8 @@ function render() {
       const folding=p<FOLD_PART;
       const clearance=(folding?stopDistance:distance)+(design?1:topRearAt300);
       card(view,`${folding?'Estimated final gap':'Gap'} to each wall at 300 mm`,mm(clearance),
-        design?(folding?'Folding three panels and their arms':'One sector open · One base arm deployed'):'Round top · Two points of tangency',
-        design?`Nominal usable area: 0.16 m². The right-hand panels stow face to face with a ${CORNER_STACK_GAP} mm gap. The stowed ${cornerLimiter.label.toLowerCase()} limits wall clearance.${postClash?' Folded panels overlap the pedestal.':''}`:
+        design?(folding?'Folding three panels and their arms':'Concept fit check · one sector open'):'Round top · Two points of tangency',
+        design?`Simplified folded-part silhouettes. Nominal usable area: 0.16 m². Readings illustrate an 8 mm gap to each wall. Hardware dimensions and internal clearances are not verified by this view.`:
           'The round top touches each wall at one point.',nearest(readings).value<-EPS);
     } else if(state.mode==='column') {
       const position=lerp(COLUMN_START,cfg.size/2+cfg.setback,move);
@@ -759,7 +699,7 @@ function render() {
       if(colliding.length) hits.add('column');
       const status=now.value<-EPS?`Column collision · ${now.label}`:now.value<=EPS?`Column contact · ${now.label}`:`Closest to the column · ${now.label}`;
       const route=first?`Maximum overlap along the path is ${mm(-worst.value)}. First contact is with the ${first.label.toLowerCase()}.`:`Minimum clearance along the path is ${mm(worst.value)}${worst.value<=EPS?' (contact)':''}.`;
-      card(view,'Current minimum clearance to the column',mm(now.value),status,route+(postClash?' The folded panel also overlaps the pedestal.':''),now.value<-EPS);
+      card(view,'Current minimum clearance to the column',mm(now.value),status,route+' This is an external fit check in a simplified concept model. Internal hardware and stability need separate checks.',now.value<-EPS);
     } else {
       card(view,'Horizontal tabletop area','0.64 m²',view.kind==='design'?'Four panels open · Four arms deployed':'Fixed round tabletop',
         view.kind==='design'?'Nominal area based on a Ø900 mm tabletop.':'Same-size baseline for the wall and column checks.');
@@ -773,11 +713,9 @@ function render() {
   byId('wall-options').hidden=state.mode!=='wall';
   byId('size-label').textContent=cfg.shape==='square'?'Side length':'Diameter';
   const finalPosition={wall:'Final wall position',column:'Final column position',corner:'Final corner position'};
-  const wallPhase=wallStages(fold);
-  const wallStage=fold<.18?'Slide base inward 85 mm':fold<.30?'Raise arms and lower rear panels 22 mm':fold<.42?'Inset rear panels 14 mm':'Fold rear panels down';
   const cornerStage=fold<CORNER_SIDE_END?'Fold left and right panels':fold<CORNER_PANELS_END?'Fold last panel to the right':'Stow base arms';
   byId('stage').textContent=p===1?(finalPosition[state.mode]??''):
-    p<FOLD_PART?(state.mode==='corner'?cornerStage:state.mode==='wall'&&state.wallRevision==='revised'?wallStage:`Folding ${Math.round(fold*90)}°`):
+    p<FOLD_PART?(state.mode==='corner'?cornerStage:`Folding ${Math.round(fold*90)}°`):
       `${state.mode==='column'?'Side entry':'Approach'} ${Math.round(move*100)}%`;
   byId('table-inset-angle').value=Math.round(state.insetAngle);
   byId('table-inset-value').textContent=`${Math.round(state.insetAngle)}°`;
@@ -794,7 +732,7 @@ let last=0, animation=0;
 function stop() {state.playing=false;cancelAnimationFrame(animation);animation=0;}
 function playFrame(time) {
   if(!state.playing) return;
-  if(last) state.progress=Math.min(1,state.progress+(time-last)/(state.mode==='wall'&&state.wallRevision==='revised'?9000:state.mode==='corner'?6600:5200));
+  if(last) state.progress=Math.min(1,state.progress+(time-last)/(state.mode==='corner'?6600:5200));
   last=time;
   if(state.progress>=1) stop();
   render();
@@ -816,7 +754,6 @@ for(const button of document.querySelectorAll('.mode')) button.addEventListener(
 byId('plan').addEventListener('click',()=>{state.plan=true;render();});
 byId('perspective').addEventListener('click',()=>{state.plan=false;render();});
 byId('reset').addEventListener('click',()=>{resetCamera();render();});
-byId('wall-revision').addEventListener('change',()=>{stop();state.wallRevision=byId('wall-revision').value;state.progress=1;render();});
 for(const id of ['shape','size','setback','show-target']) byId(id).addEventListener('change',()=>{
   const cfg=config();byId('size').value=cfg.size;byId('setback').value=cfg.setback;render();
 });
